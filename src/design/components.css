@@ -437,11 +437,13 @@
 .confirm-catcher {
   position: fixed;
   inset: 0;
-  z-index: calc(var(--z-palette) - 1);
+  z-index: calc(var(--z-palette) + 1);
 }
-.confirm-panel {
+/* two classes, so this wins over .popover-panel no matter where either sits in
+   the stylesheet — that ordering is what put the catcher above the panel */
+.popover-panel.confirm-panel {
   position: fixed;
-  z-index: var(--z-palette);
+  z-index: calc(var(--z-palette) + 2);
   display: flex;
   flex-direction: column;
   gap: var(--s-2);
