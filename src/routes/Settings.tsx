@@ -492,6 +492,11 @@ export function Settings() {
               label={settings.ambient === 'shader' ? 'living water' : 'still water'}
               onClick={() => setSettings({ ambient: settings.ambient === 'shader' ? 'still' : 'shader' })}
             />
+            <Toggle
+              on={settings.uiSounds !== false}
+              label={settings.uiSounds !== false ? 'suara antarmuka' : 'antarmuka sunyi'}
+              onClick={() => setSettings({ uiSounds: settings.uiSounds === false })}
+            />
             <label className="number-field slider-field">
               <span className="gauge-label">chime</span>
               <input

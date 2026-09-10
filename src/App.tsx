@@ -26,6 +26,7 @@ import { invoke } from '@tauri-apps/api/core'
 import { useOcean } from './ocean/useOcean'
 import { quickParse } from './lib/quickparse'
 import { chime, wakeAudio } from './lib/chime'
+import { installUiSounds } from './lib/uisound'
 import { ensureNotifyPermission, notify } from './lib/notify'
 import type { Route } from './types'
 
@@ -272,7 +273,11 @@ export default function App() {
     }
     window.addEventListener('keydown', onKey)
     window.addEventListener('pointerdown', wakeAudio, { once: true })
-    return () => window.removeEventListener('keydown', onKey)
+    const silence = installUiSounds()
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      silence()
+    }
   }, [chord])
 
   const View = ROUTES[route]

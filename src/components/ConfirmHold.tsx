@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useApp } from '../store/useApp'
 import { useUi } from '../store/useUi'
 import { IconCheck, IconClose } from '../design/icons'
+import { bloom } from '../lib/chime'
 
 /** How long the row takes to rise and dissolve before it actually completes. */
 export const CLEAR_MS = 850
@@ -19,6 +20,9 @@ export function completeTask(taskId: string) {
   const ui = useUi.getState()
   const task = app.tasks.find((t) => t.id === taskId)
   if (!task) return
+
+  // the sound lands with the press, not after the animation
+  bloom(app.settings.uiSounds === false ? 0 : app.settings.chimeVolume)
 
   const finish = () => {
     app.toggleDone(taskId)

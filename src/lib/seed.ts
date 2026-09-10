@@ -101,6 +101,7 @@ export function seedData(): AppData {
       },
       hotkey: 'Control+Alt+Space',
       chimeVolume: 0.5,
+      uiSounds: true,
       ambient: 'shader',
       clock24h: true,
       showSeconds: false,

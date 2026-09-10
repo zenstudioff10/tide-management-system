@@ -90,6 +90,8 @@ export interface Settings {
   pomodoro: PomodoroConfig
   hotkey: string
   chimeVolume: number
+  /** the presses, hovers and completions. Absent means on. */
+  uiSounds?: boolean
   ambient: 'shader' | 'still'
   clock24h: boolean
   showSeconds: boolean
