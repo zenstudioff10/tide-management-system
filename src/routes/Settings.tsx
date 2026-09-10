@@ -49,7 +49,21 @@ function Boards() {
             <button
               className="quiet-button danger"
               disabled={boards.length < 2}
-              onClick={() => app.deleteBoard(board.id)}
+              onClick={(e) => {
+                const r = e.currentTarget.getBoundingClientRect()
+                const held = tasks.filter((t) => t.boardId === board.id).length
+                const fallback = [...boards]
+                  .filter((b) => b.id !== board.id)
+                  .sort((a, b) => a.order - b.order)[0]
+                useUi.getState().askConfirm({
+                  kind: 'delete',
+                  title: `Daftar ${board.name}`,
+                  note: held ? `${held} isi pindah ke ${fallback?.name}` : undefined,
+                  x: r.left - 60,
+                  y: r.top + 28,
+                  onConfirm: () => app.deleteBoard(board.id),
+                })
+              }}
             >
               hapus
             </button>
@@ -218,8 +232,26 @@ function Groupings() {
               >
                 {dimension.showOnCard ? 'on rows' : 'hidden on rows'}
               </button>
-              <button className="quiet-button danger" onClick={() => app.deleteDimension(dimension.id)}>
-                delete
+              <button
+                className="quiet-button danger"
+                onClick={(e) => {
+                  const r = e.currentTarget.getBoundingClientRect()
+                  const owned = options.filter((o) => o.dimensionId === dimension.id)
+                  const ids = new Set(owned.map((o) => o.id))
+                  const touched = useApp
+                    .getState()
+                    .tasks.filter((t) => t.optionIds.some((x) => ids.has(x))).length
+                  useUi.getState().askConfirm({
+                    kind: 'delete',
+                    title: `Grouping ${dimension.name}`,
+                    note: `${owned.length} label dicabut dari ${touched} task`,
+                    x: r.left - 60,
+                    y: r.top + 28,
+                    onConfirm: () => app.deleteDimension(dimension.id),
+                  })
+                }}
+              >
+                hapus
               </button>
             </div>
 
@@ -254,7 +286,23 @@ function Groupings() {
                     value={option.name}
                     onChange={(e) => app.updateOption(option.id, { name: e.target.value })}
                   />
-                  <button className="icon-button" onClick={() => app.deleteOption(option.id)}>
+                  <button
+                    className="icon-button"
+                    onClick={(e) => {
+                      const r = e.currentTarget.getBoundingClientRect()
+                      const used = useApp
+                        .getState()
+                        .tasks.filter((t) => t.optionIds.includes(option.id)).length
+                      useUi.getState().askConfirm({
+                        kind: 'delete',
+                        title: `Label ${option.name}`,
+                        note: used ? `dicabut dari ${used} task` : undefined,
+                        x: r.left - 220,
+                        y: r.top + 24,
+                        onConfirm: () => app.deleteOption(option.id),
+                      })
+                    }}
+                  >
                     <IconClose size={13} />
                   </button>
                 </div>

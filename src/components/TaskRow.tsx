@@ -4,12 +4,14 @@ import { Chip } from './Chip'
 import { IconCheck } from '../design/icons'
 import { fmtDayCell, fmtDayLong, sameDay, startOfDay } from '../lib/time'
 import { useUi } from '../store/useUi'
+import { completeTask } from './ConfirmHold'
 
 interface Props {
   task: Task
   dimensions: Dimension[]
   options: DimOption[]
   selected?: boolean
+  dragging?: boolean
   draggable?: boolean
   onToggle: () => void
   onOpen: () => void
@@ -22,6 +24,7 @@ export function TaskRow({
   dimensions,
   options,
   selected,
+  dragging,
   draggable = true,
   onToggle,
   onOpen,
@@ -53,7 +56,13 @@ export function TaskRow({
   const complete = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (done) return onToggle()
     const r = e.currentTarget.getBoundingClientRect()
-    useUi.getState().askConfirm(task.id, r.left + r.width + 10, r.top - 6)
+    useUi.getState().askConfirm({
+      kind: 'done',
+      title: task.title,
+      x: r.left + r.width + 10,
+      y: r.top - 6,
+      onConfirm: () => completeTask(task.id),
+    })
   }
 
   return (
@@ -61,6 +70,7 @@ export function TaskRow({
       className="task-row"
       data-done={done ? '' : undefined}
       data-clearing={clearing ? '' : undefined}
+      data-dragging={dragging ? '' : undefined}
       data-selected={selected ? '' : undefined}
       draggable={draggable}
       onDragStart={onDragStart}

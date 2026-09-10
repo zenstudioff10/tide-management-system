@@ -11,8 +11,16 @@ interface UiStore {
   openTaskId: string | null
   paletteOpen: boolean
   showDone: boolean
-  /** a completion waiting to be confirmed, anchored where you clicked */
-  confirming: { taskId: string; x: number; y: number } | null
+  /** something waiting to be confirmed, anchored where you clicked. The action
+   *  travels with it, so the panel never has to know what it is confirming. */
+  confirm: {
+    kind: 'done' | 'delete'
+    title: string
+    note?: string
+    x: number
+    y: number
+    onConfirm: () => void
+  } | null
   /** ids mid-animation: still open, still mounted, on their way out */
   clearing: string[]
   /** the last thing finished, with an undo attached */
@@ -33,7 +41,7 @@ interface UiStore {
   toggleShowDone: () => void
   startCompose: (text?: string) => void
   endCompose: () => void
-  askConfirm: (taskId: string, x: number, y: number) => void
+  askConfirm: (confirm: NonNullable<UiStore['confirm']>) => void
   cancelConfirm: () => void
   beginClearing: (taskId: string) => void
   endClearing: (taskId: string) => void
@@ -60,7 +68,7 @@ export const useUi = create<UiStore>((set) => ({
   paletteOpen: false,
   showDone: false,
   composing: null,
-  confirming: null,
+  confirm: null,
   clearing: [],
   toast: null,
   burst: null,
@@ -89,10 +97,10 @@ export const useUi = create<UiStore>((set) => ({
   startCompose: (text = '') => set({ composing: text, paletteOpen: false }),
   endCompose: () => set({ composing: null }),
 
-  askConfirm: (taskId, x, y) => set({ confirming: { taskId, x, y } }),
-  cancelConfirm: () => set({ confirming: null }),
+  askConfirm: (confirm) => set({ confirm }),
+  cancelConfirm: () => set({ confirm: null }),
   beginClearing: (taskId) =>
-    set((s) => ({ confirming: null, clearing: [...s.clearing, taskId] })),
+    set((s) => ({ confirm: null, clearing: [...s.clearing, taskId] })),
   endClearing: (taskId) => set((s) => ({ clearing: s.clearing.filter((x) => x !== taskId) })),
   showToast: (taskId, title) => set({ toast: { taskId, title } }),
   hideToast: () => set({ toast: null }),

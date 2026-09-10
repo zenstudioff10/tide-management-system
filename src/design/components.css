@@ -50,6 +50,40 @@
     );
 }
 
+/* ── the touch contract ─────────────────────────────────────────────── */
+/* everything clickable acknowledges the press itself, not only the hover */
+button,
+.chip-button,
+.task-row,
+.agenda-row,
+.brief-row,
+.chat-row {
+  transition:
+    color var(--t-touch) var(--ease-touch),
+    background var(--t-touch) var(--ease-touch),
+    border-color var(--t-touch) var(--ease-touch),
+    opacity var(--t-touch) var(--ease-touch),
+    transform var(--t-touch) var(--ease-touch);
+}
+button:active:not(:disabled),
+.chip-button:active {
+  transform: scale(0.97);
+}
+/* rows are wide; scaling them looks wrong, so they press by darkening */
+.task-row:active,
+.agenda-row:active,
+.brief-row:active,
+.chat-row:active {
+  transform: none;
+  background: color-mix(in oklab, var(--foam) 10%, transparent);
+}
+@media (prefers-reduced-motion: reduce) {
+  button:active:not(:disabled),
+  .chip-button:active {
+    transform: none;
+  }
+}
+
 /* content rises in on the same curve the water uses */
 .route {
   height: 100%;
@@ -68,19 +102,35 @@
 }
 
 .icon-button {
+  position: relative;
   display: grid;
   place-items: center;
   width: 30px;
   height: 30px;
-  border-radius: var(--r-sm);
+  border-radius: var(--r-round);
   color: var(--ink-3);
+}
+.icon-button::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: color-mix(in oklab, var(--foam) 9%, transparent);
+  opacity: 0;
+  transform: scale(0.8);
   transition:
-    color var(--t-quick) var(--ease-tide),
-    background var(--t-quick) var(--ease-tide);
+    opacity var(--t-touch) var(--ease-touch),
+    transform var(--t-touch) var(--ease-touch);
 }
 .icon-button:hover {
   color: var(--ink-1);
-  background: color-mix(in oklab, var(--foam) 8%, transparent);
+}
+.icon-button:hover::before {
+  opacity: 1;
+  transform: scale(1);
+}
+.icon-button > * {
+  position: relative;
 }
 .icon-button:disabled {
   color: var(--ink-4);
@@ -223,6 +273,19 @@
 }
 .task-row:hover {
   background: color-mix(in oklab, var(--foam) 5%, transparent);
+  box-shadow: inset 2px 0 0 color-mix(in oklab, var(--tod-light) 45%, transparent);
+}
+.task-row:hover .task-title {
+  transform: translateX(2px);
+}
+.task-row:hover .task-day {
+  color: var(--tod-light);
+}
+.task-title,
+.task-day {
+  transition:
+    transform var(--t-touch) var(--ease-touch),
+    color var(--t-touch) var(--ease-touch);
 }
 .task-row[data-selected] {
   background: color-mix(in oklab, var(--foam) 8%, transparent);
@@ -480,6 +543,19 @@
 }
 .hold-button[data-holding] {
   color: var(--tod-light);
+}
+[data-kind='delete'] .hold-button {
+  color: color-mix(in oklab, var(--coral) 70%, var(--moon));
+}
+[data-kind='delete'] .hold-fill {
+  stroke: var(--coral);
+}
+[data-kind='delete'] .confirm-title {
+  color: color-mix(in oklab, var(--coral) 32%, var(--moon));
+}
+.confirm-note {
+  margin: calc(var(--s-1) * -1) 0 0;
+  color: var(--ink-3);
 }
 .hold-ring {
   position: absolute;

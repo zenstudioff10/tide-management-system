@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useApp } from '../store/useApp'
 import { useUi } from '../store/useUi'
-import { IconCheck } from '../design/icons'
+import { IconCheck, IconClose } from '../design/icons'
 
 /** How long the row takes to rise and dissolve before it actually completes. */
 export const CLEAR_MS = 850
@@ -13,7 +13,7 @@ const reducedMotion = () =>
   window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
 /** Finish a task: hold it open while it animates away, then mark it done and
- *  leave an undo behind. */
+ *  leave an undo behind. Exported for the `x` shortcut in Depths. */
 export function completeTask(taskId: string) {
   const app = useApp.getState()
   const ui = useUi.getState()
@@ -36,11 +36,11 @@ export function completeTask(taskId: string) {
   window.setTimeout(finish, CLEAR_MS)
 }
 
-/** A small panel anchored where the circle was clicked. Nothing completes on a
- *  single click — you hold the ring until it fills, and it bursts on release. */
-export function ConfirmDone() {
-  const confirming = useUi((s) => s.confirming)
-  const task = useApp((s) => s.tasks.find((t) => t.id === confirming?.taskId))
+/** Anchored where you clicked, and never completed by a single click: the ring
+ *  fills while you hold it and lets go on its own. Deleting wears the same
+ *  gesture in coral, so one habit covers both and the colour carries the risk. */
+export function ConfirmHold() {
+  const confirm = useUi((s) => s.confirm)
   const [holding, setHolding] = useState(false)
   const timer = useRef<number | undefined>(undefined)
   const button = useRef<HTMLButtonElement>(null)
@@ -53,7 +53,7 @@ export function ConfirmDone() {
   useEffect(() => () => window.clearTimeout(timer.current), [])
 
   useEffect(() => {
-    if (!confirming) return
+    if (!confirm) return
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         e.preventDefault()
@@ -63,28 +63,29 @@ export function ConfirmDone() {
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [confirming])
+  }, [confirm])
 
-  if (!confirming || !task) return null
+  if (!confirm) return null
 
-  const startHold = () => {
-    if (reducedMotion()) return release(true)
-    setHolding(true)
-    timer.current = window.setTimeout(() => release(true), HOLD_MS)
-  }
+  const deleting = confirm.kind === 'delete'
 
-  /** `full` is true only when the ring actually finished filling */
-  const release = (full: boolean) => {
+  const fire = () => {
     stopHold()
-    if (!full) return
     const r = button.current?.getBoundingClientRect()
     if (r) useUi.getState().fireBurst(r.left + r.width / 2, r.top + r.height / 2)
-    completeTask(task.id)
+    confirm.onConfirm()
+    useUi.getState().cancelConfirm()
   }
 
-  // keep the panel on screen when the row sits near an edge
-  const left = Math.min(confirming.x, window.innerWidth - 260)
-  const top = Math.min(confirming.y, window.innerHeight - 170)
+  const startHold = () => {
+    if (reducedMotion()) return fire()
+    setHolding(true)
+    timer.current = window.setTimeout(fire, HOLD_MS)
+  }
+
+  // keep the panel on screen when whatever you clicked sits near an edge
+  const left = Math.min(confirm.x, window.innerWidth - 260)
+  const top = Math.min(confirm.y, window.innerHeight - 190)
 
   return (
     <>
@@ -95,9 +96,10 @@ export function ConfirmDone() {
           useUi.getState().cancelConfirm()
         }}
       />
-      <div className="popover-panel confirm-panel" style={{ left, top }}>
-        <span className="gauge-label">tandai selesai?</span>
-        <p className="confirm-title">{task.title}</p>
+      <div className="popover-panel confirm-panel" data-kind={confirm.kind} style={{ left, top }}>
+        <span className="gauge-label">{deleting ? 'hapus ini?' : 'tandai selesai?'}</span>
+        <p className="confirm-title">{confirm.title}</p>
+        {confirm.note && <p className="gauge-label confirm-note">{confirm.note}</p>}
 
         <div className="confirm-hold">
           <button
@@ -105,18 +107,22 @@ export function ConfirmDone() {
             className="hold-button"
             data-holding={holding ? '' : undefined}
             onPointerDown={startHold}
-            onPointerUp={() => release(false)}
-            onPointerLeave={() => release(false)}
-            aria-label="Tahan untuk menyelesaikan"
+            onPointerUp={stopHold}
+            onPointerLeave={stopHold}
+            aria-label={deleting ? 'Tahan untuk menghapus' : 'Tahan untuk menyelesaikan'}
           >
             <svg viewBox="0 0 48 48" className="hold-ring" aria-hidden>
               <circle className="hold-track" cx="24" cy="24" r="21" />
               <circle className="hold-fill" cx="24" cy="24" r="21" />
             </svg>
-            <IconCheck size={18} className="hold-check" />
+            {deleting ? (
+              <IconClose size={18} className="hold-check" />
+            ) : (
+              <IconCheck size={18} className="hold-check" />
+            )}
           </button>
           <span className="gauge-label hold-hint">
-            {holding ? 'terus tahan…' : 'tahan untuk selesai'}
+            {holding ? 'terus tahan…' : deleting ? 'tahan untuk hapus' : 'tahan untuk selesai'}
           </span>
         </div>
 

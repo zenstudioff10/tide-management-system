@@ -13,7 +13,7 @@ import { Reminders } from './routes/Reminders'
 import { Settings } from './routes/Settings'
 import { TaskDrawer } from './components/TaskDrawer'
 import { TaskCompose } from './components/TaskCompose'
-import { ConfirmDone } from './components/ConfirmDone'
+import { ConfirmHold } from './components/ConfirmHold'
 import { Toast } from './components/Toast'
 import { Burst } from './components/Burst'
 import { CommandPalette } from './components/CommandPalette'
@@ -89,6 +89,16 @@ export default function App() {
       window.removeEventListener('pointerdown', skip)
       window.removeEventListener('keydown', skip)
     }
+  }, [])
+
+  // deep links: changing the hash navigates, not just on first load
+  useEffect(() => {
+    const onHash = () => {
+      const hash = window.location.hash.slice(1) as Route
+      if (hash && hash in ROUTES) useUi.getState().go(hash)
+    }
+    window.addEventListener('hashchange', onHash)
+    return () => window.removeEventListener('hashchange', onHash)
   }, [])
 
   // one heartbeat drives every clock in the app, and the water with them
@@ -181,6 +191,8 @@ export default function App() {
       if (typing) return
 
       if (e.key === 'Escape') {
+        // the confirmation is the topmost layer; it dismisses alone
+        if (useUi.getState().confirm) return
         useUi.getState().openTask(null)
         useUi.getState().setPalette(false)
         useUi.getState().endCompose()
@@ -220,7 +232,7 @@ export default function App() {
       </main>
       <TaskDrawer />
       <TaskCompose />
-      <ConfirmDone />
+      <ConfirmHold />
       <Toast />
       <Burst />
       <CommandPalette />

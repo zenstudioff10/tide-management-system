@@ -7,7 +7,7 @@ import { TaskRow } from '../components/TaskRow'
 import { QuickAdd } from '../components/QuickAdd'
 import { FilterBar, GroupBySelect } from '../components/Controls'
 import { BoardTabs } from '../components/BoardTabs'
-import { completeTask } from '../components/ConfirmDone'
+import { completeTask } from '../components/ConfirmHold'
 import { IconSurface } from '../design/icons'
 
 /** The water column. Lanes are the options of whichever dimension is chosen,
@@ -180,6 +180,7 @@ export function Depths() {
                     dimensions={dimensions}
                     options={options}
                     selected={cursor === task.id}
+                    dragging={dragId === task.id}
                     draggable={!byDate}
                     onToggle={() => useApp.getState().toggleDone(task.id)}
                     onOpen={() => useUi.getState().openTask(task.id)}

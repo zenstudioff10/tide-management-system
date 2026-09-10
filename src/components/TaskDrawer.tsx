@@ -30,7 +30,8 @@ export function TaskDrawer() {
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') close()
+      // a confirmation sits above the drawer; let it take the key first
+      if (e.key === 'Escape' && !useUi.getState().confirm) close()
     }
     if (taskId) window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
@@ -234,12 +235,21 @@ export function TaskDrawer() {
         <div className="drawer-foot">
           <button
             className="quiet-button danger"
-            onClick={() => {
-              deleteTask(task.id)
-              close()
+            onClick={(e) => {
+              const r = e.currentTarget.getBoundingClientRect()
+              useUi.getState().askConfirm({
+                kind: 'delete',
+                title: task.title,
+                x: r.left - 40,
+                y: r.top - 190,
+                onConfirm: () => {
+                  deleteTask(task.id)
+                  close()
+                },
+              })
             }}
           >
-            delete
+            hapus
           </button>
         </div>
       </aside>

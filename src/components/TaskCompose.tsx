@@ -60,6 +60,7 @@ export function TaskCompose() {
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      if (useUi.getState().confirm) return
       if (e.key === 'Escape') useUi.getState().endCompose()
       if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) save()
     }

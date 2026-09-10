@@ -114,7 +114,19 @@ export function Reminders() {
               >
                 done
               </button>
-              <button className="icon-button" onClick={() => useApp.getState().deleteReminder(r.id)}>
+              <button
+                className="icon-button"
+                onClick={(e) => {
+                  const box = e.currentTarget.getBoundingClientRect()
+                  useUi.getState().askConfirm({
+                    kind: 'delete',
+                    title: r.title,
+                    x: box.left - 220,
+                    y: box.top + 24,
+                    onConfirm: () => useApp.getState().deleteReminder(r.id),
+                  })
+                }}
+              >
                 <IconClose size={14} />
               </button>
             </article>
@@ -129,7 +141,19 @@ export function Reminders() {
               <article key={r.id} className="reminder reminder-past">
                 <span className="mono reminder-time">{fmtTimeShort(r.at, clock24h)}</span>
                 <p className="reminder-label">{r.title}</p>
-                <button className="icon-button" onClick={() => useApp.getState().deleteReminder(r.id)}>
+                <button
+                  className="icon-button"
+                  onClick={(e) => {
+                    const box = e.currentTarget.getBoundingClientRect()
+                    useUi.getState().askConfirm({
+                      kind: 'delete',
+                      title: r.title,
+                      x: box.left - 220,
+                      y: box.top + 24,
+                      onConfirm: () => useApp.getState().deleteReminder(r.id),
+                    })
+                  }}
+                >
                   <IconClose size={14} />
                 </button>
               </article>
