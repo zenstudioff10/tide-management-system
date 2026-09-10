@@ -49,7 +49,8 @@
   --step-2: 1.375rem;
   --step-3: 2rem;
   --step-4: 3.25rem;
-  --step-5: clamp(4.5rem, 11vw, 9.5rem);
+  /* the clock keeps growing on a large display instead of stalling at 9.5rem */
+  --step-5: clamp(4.5rem, 10.5vw, 13rem);
 
   /* --- rhythm. no arbitrary numbers past this line. --- */
   --s-1: 4px;
@@ -75,6 +76,9 @@
   --t-mid: 480ms;
   --t-slow: 900ms;
   --breath: 6s;
+
+  /* the interface stops spreading here; the ocean behind it never does */
+  --page-max: 1600px;
 
   --z-water: 0;
   --z-content: 10;

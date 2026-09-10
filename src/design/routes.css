@@ -16,6 +16,10 @@
     'capture capture';
   gap: var(--s-5) var(--s-6);
   padding: var(--s-5) var(--s-7) var(--s-6);
+  /* on a wide monitor the clock and the stones were a metre apart */
+  max-width: var(--page-max);
+  margin-inline: auto;
+  width: 100%;
 }
 
 .surface-head {
@@ -138,7 +142,12 @@
 }
 .surface-next {
   grid-area: next;
-  align-self: stretch;
+  /* as tall as what is in it. Stretching left a dark field hanging over the
+     water wherever the list ran out, which on a large screen was most of it. */
+  align-self: start;
+  /* never taller than its own row either, or a laptop-sized window
+     would let it spill across the tide line below */
+  max-height: min(100%, 60vh, 560px);
   display: flex;
   flex-direction: column;
   gap: var(--s-2);
