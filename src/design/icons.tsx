@@ -103,6 +103,14 @@ export const IconSkip = ({ size = 20, className }: Props) =>
     </>
   ))
 
+export const IconAsk = ({ size = 20, className }: Props) =>
+  svg(size, className, (
+    <>
+      <path d="M3.5 9.2c0-2.6 2.9-4.7 6.5-4.7s6.5 2.1 6.5 4.7-2.9 4.7-6.5 4.7c-.7 0-1.4-.1-2-.2L4 15.5l.9-2.5c-.9-.8-1.4-1.8-1.4-2.9Z" />
+      <path d="M7.8 9.2h4.4" opacity={0.55} />
+    </>
+  ))
+
 export const IconSearch = ({ size = 20, className }: Props) =>
   svg(size, className, (
     <>

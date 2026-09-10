@@ -6,6 +6,7 @@ import { useNow } from '../lib/useNow'
 import { boardTasks, byDueDate, importantTasks, loadByDay, weekLoad } from '../store/selectors'
 import { Chip } from '../components/Chip'
 import { IconSurface } from '../design/icons'
+import { ChatButton } from '../components/ChatButton'
 import { daysUntil, fmtCountdown, fmtDayCell, fmtDayLong } from '../lib/time'
 import { useEffect } from 'react'
 import type { Task } from '../types'
@@ -78,6 +79,8 @@ export function Focus() {
           <IconSurface size={18} />
         </button>
         <span className="gauge-label">yang kamu punya</span>
+        <span className="head-spacer" />
+        <ChatButton />
       </header>
 
       <div className="brief-scroll">

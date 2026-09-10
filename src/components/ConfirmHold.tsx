@@ -109,6 +109,8 @@ export function ConfirmHold() {
             onPointerDown={startHold}
             onPointerUp={stopHold}
             onPointerLeave={stopHold}
+            onPointerCancel={stopHold}
+            onContextMenu={(e) => e.preventDefault()}
             aria-label={deleting ? 'Tahan untuk menghapus' : 'Tahan untuk menyelesaikan'}
           >
             <svg viewBox="0 0 48 48" className="hold-ring" aria-hidden>

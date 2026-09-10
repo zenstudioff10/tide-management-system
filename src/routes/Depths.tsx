@@ -7,6 +7,7 @@ import { TaskRow } from '../components/TaskRow'
 import { QuickAdd } from '../components/QuickAdd'
 import { FilterBar, GroupBySelect } from '../components/Controls'
 import { BoardTabs } from '../components/BoardTabs'
+import { ChatButton } from '../components/ChatButton'
 import { completeTask } from '../components/ConfirmHold'
 import { IconSurface } from '../design/icons'
 
@@ -126,6 +127,8 @@ export function Depths() {
             <IconSurface size={18} />
           </button>
           <BoardTabs />
+          <span className="head-spacer" />
+          <ChatButton />
         </div>
         <div className="head-row">
           <GroupBySelect />

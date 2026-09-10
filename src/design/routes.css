@@ -83,6 +83,9 @@
 .ask-hint {
   opacity: 0.5;
 }
+.ask-open {
+  flex: none;
+}
 
 .surface-clock {
   grid-area: clock;
@@ -421,6 +424,9 @@
   display: flex;
   align-items: center;
   gap: var(--s-4);
+}
+.head-spacer {
+  flex: 1;
 }
 
 .filter-menu {
