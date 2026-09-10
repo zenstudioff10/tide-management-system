@@ -162,6 +162,12 @@ network requests.
   out at its margins, so type stays legible while the water keeps moving around
   and above it. No white card, no frosted glass. Depth dims a lane's chrome, never
   its text.
+- **It never opens empty.** A loading screen is inlined into `index.html` —
+  markup and CSS the parser paints before the bundle is even fetched — so the
+  window is the app's own near-black from the first frame, with the wordmark
+  over a breathing line while the data file is read. It stays a minimum of 700ms
+  so it cannot flash past, and the ascent begins only once it has gone, rather
+  than playing its first second out of sight behind it.
 - **The deep is inhabited.** Four fish cross the lower water on independent
   speeds, undulating along their own length rather than sliding. They are gated
   on depth, so the bright homescreen keeps its stillness and the column below

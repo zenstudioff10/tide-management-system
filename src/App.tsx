@@ -19,6 +19,7 @@ import { Burst } from './components/Burst'
 import { CommandPalette } from './components/CommandPalette'
 import { dueReminders } from './store/selectors'
 import { INTRO_MS, introDepth, useIntro } from './intro/useIntro'
+import { dismissBoot } from './lib/boot'
 import { useOcean } from './ocean/useOcean'
 import { quickParse } from './lib/quickparse'
 import { chime, wakeAudio } from './lib/chime'
@@ -48,6 +49,7 @@ export default function App() {
   const ambient = useApp((s) => s.settings.ambient)
   const route = useUi((s) => s.route)
   const introDone = useIntro((s) => s.done)
+  const [booted, setBooted] = useState(false)
   const [chord, setChord] = useState(false)
 
   useEffect(() => {
@@ -55,8 +57,23 @@ export default function App() {
     void ensureNotifyPermission()
   }, [])
 
-  // the ascent: one rAF loop publishing the launch clock into the water
+  // the loading screen goes when there is something real to show
   useEffect(() => {
+    if (!ready) return
+    let cancelled = false
+    void dismissBoot().then(() => {
+      if (!cancelled) setBooted(true)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [ready])
+
+  // the ascent: one rAF loop publishing the launch clock into the water.
+  // It waits for the loading screen, so it always begins from the floor rather
+  // than playing its first second out of sight behind it.
+  useEffect(() => {
+    if (!booted) return
     const intro = useIntro.getState()
     if (intro.done) {
       useOcean.getState().setIntro(0)
@@ -89,7 +106,7 @@ export default function App() {
       window.removeEventListener('pointerdown', skip)
       window.removeEventListener('keydown', skip)
     }
-  }, [])
+  }, [booted])
 
   // deep links: changing the hash navigates, not just on first load
   useEffect(() => {
