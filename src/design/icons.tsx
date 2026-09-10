@@ -6,10 +6,15 @@ interface Props {
   className?: string
 }
 
+/* The number a caller passes is the size at a 16px root — 18 still means 18px
+   in a window. It is written in rem so a mark grows with the type around it
+   instead of staying a fixed dot on a large display. The px attributes stay
+   underneath as the fallback if the style never lands. */
 const svg = (size: number, className: string | undefined, children: React.ReactNode) => (
   <svg
     width={size}
     height={size}
+    style={{ width: `${size / 16}rem`, height: `${size / 16}rem` }}
     viewBox="0 0 20 20"
     fill="none"
     stroke="currentColor"

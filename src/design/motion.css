@@ -17,35 +17,35 @@
 @keyframes drawer-out {
   to {
     opacity: 0;
-    transform: translateX(26px);
+    transform: translateX(1.625rem);
   }
 }
 
 @keyframes sheet-out {
   to {
     opacity: 0;
-    transform: translateY(28px);
+    transform: translateY(1.75rem);
   }
 }
 
 @keyframes palette-out {
   to {
     opacity: 0;
-    transform: translateY(-6px) scale(0.985);
+    transform: translateY(-0.375rem) scale(0.985);
   }
 }
 
 @keyframes toast-out {
   to {
     opacity: 0;
-    transform: translate(-50%, 8px);
+    transform: translate(-50%, 0.5rem);
   }
 }
 
 @keyframes panel-out {
   to {
     opacity: 0;
-    transform: translateY(-4px) scale(0.97);
+    transform: translateY(-0.25rem) scale(0.97);
   }
 }
 
@@ -93,14 +93,14 @@
 @keyframes dive {
   from {
     opacity: 0;
-    transform: translateY(20px) scale(0.988);
+    transform: translateY(1.25rem) scale(0.988);
   }
 }
 
 @keyframes surfacing {
   from {
     opacity: 0;
-    transform: translateY(-18px) scale(1.012);
+    transform: translateY(-1.125rem) scale(1.012);
   }
 }
 
@@ -122,7 +122,7 @@
 @keyframes settle {
   from {
     opacity: 0;
-    transform: translateY(7px);
+    transform: translateY(0.4375rem);
   }
 }
 

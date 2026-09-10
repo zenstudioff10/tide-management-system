@@ -2,6 +2,14 @@
    Fixed palette below; the --tod-* variables are rewritten at runtime by
    useTimeOfDay() so the interface and the water always agree on the hour. */
 
+/* The interface was drawn in a window 1344px wide. 1.19vw is 16 / 1344, so at
+   that width the root is exactly 16px and nothing below it changes by a pixel;
+   past it every rem in the app grows with the display, which is what makes a
+   full screen the same layout rather than a small one stranded in the middle. */
+:root {
+  font-size: clamp(16px, 1.19vw, 36px);
+}
+
 :root {
   /* --- water, deepest to lightest --- */
   --abyss: #05090e;
@@ -53,17 +61,19 @@
   --step-5: clamp(4.5rem, 10.5vw, 13rem);
 
   /* --- rhythm. no arbitrary numbers past this line. --- */
-  --s-1: 4px;
-  --s-2: 8px;
-  --s-3: 12px;
-  --s-4: 20px;
-  --s-5: 32px;
-  --s-6: 52px;
-  --s-7: 84px;
+  /* in rem, so the whole interface grows with the root above. At a 16px root
+     these are 4 · 8 · 12 · 20 · 32 · 52 · 84px, exactly what they always were. */
+  --s-1: 0.25rem;
+  --s-2: 0.5rem;
+  --s-3: 0.75rem;
+  --s-4: 1.25rem;
+  --s-5: 2rem;
+  --s-6: 3.25rem;
+  --s-7: 5.25rem;
 
   /* --- radii: small and deliberate. round is for stones only. --- */
-  --r-sm: 4px;
-  --r-md: 8px;
+  --r-sm: 0.25rem;
+  --r-md: 0.5rem;
   --r-round: 999px;
 
   /* --- motion: slow in, slower out --- */
@@ -80,8 +90,10 @@
   --t-slow: 900ms;
   --breath: 6s;
 
-  /* the interface stops spreading here; the ocean behind it never does */
-  --page-max: 1600px;
+  /* The interface stops spreading here; the ocean behind it never does.
+     In rem, so it grows with the scale instead of leaving a fixed 1600px slab
+     marooned in the middle of a large display. */
+  --page-max: 84rem;
 
   --z-water: 0;
   --z-content: 10;

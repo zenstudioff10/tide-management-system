@@ -92,7 +92,7 @@ button:active:not(:disabled),
 @keyframes route-in {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(0.5rem);
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -105,8 +105,8 @@ button:active:not(:disabled),
   position: relative;
   display: grid;
   place-items: center;
-  width: 30px;
-  height: 30px;
+  width: 1.875rem;
+  height: 1.875rem;
   border-radius: var(--r-round);
   color: var(--ink-3);
 }
@@ -170,7 +170,7 @@ button:active:not(:disabled),
 .chip {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 0.375rem;
   font-size: var(--step--1);
   color: var(--ink-2);
   white-space: nowrap;
@@ -181,13 +181,13 @@ button:active:not(:disabled),
 
 /* row treatment — a highlighter, not a pill: 4px radius, no border, no shadow */
 /* A wash of the label's own colour, nothing behind it. Fully round and filled
-   — two deliberate breaks from the radius rule, because at 11px a pill of low
-   alpha reads as a soft mark while a 4px slab reads as a sticker. */
+   — two deliberate breaks from the radius rule, because at 0.6875rem a pill of low
+   alpha reads as a soft mark while a 0.25rem slab reads as a sticker. */
 .chip-loud {
   gap: 0;
-  padding: 1px 6px;
+  padding: 1px 0.375rem;
   border-radius: var(--r-round);
-  font-size: 10.5px;
+  font-size: 0.65625rem;
   letter-spacing: 0.03em;
   font-weight: 500;
   /* quieter: the title leads, the labels sit behind it */
@@ -195,13 +195,13 @@ button:active:not(:disabled),
   background: color-mix(in oklab, var(--chip) 16%, transparent);
 }
 .chip-dot {
-  width: 5px;
-  height: 5px;
+  width: 0.3125rem;
+  height: 0.3125rem;
   border-radius: var(--r-round);
   flex: none;
 }
 .chip-button {
-  padding: 2px var(--s-1);
+  padding: 0.125rem var(--s-1);
   margin: 0 calc(var(--s-1) * -1);
   border-radius: var(--r-sm);
   color: var(--ink-3);
@@ -228,15 +228,15 @@ button:active:not(:disabled),
 
 /* inline label creation, straight from the form */
 .chip-add {
-  width: 22px;
-  height: 22px;
+  width: 1.375rem;
+  height: 1.375rem;
   color: var(--ink-4);
 }
 .chip-add:hover {
   color: var(--tod-light);
 }
 .option-inline {
-  width: 130px;
+  width: 8.125rem;
 }
 
 /* a label the app maintains: shown, never offered as a control */
@@ -256,7 +256,7 @@ button:active:not(:disabled),
   display: flex;
   flex-direction: column;
   gap: var(--s-2);
-  min-width: 150px;
+  min-width: 9.375rem;
 }
 
 /* ── task row ───────────────────────────────────────────────────────── */
@@ -264,19 +264,19 @@ button:active:not(:disabled),
 .task-row {
   position: relative;
   display: grid;
-  grid-template-columns: 58px 20px minmax(0, 1fr) 26px;
+  grid-template-columns: 3.625rem 1.25rem minmax(0, 1fr) 1.625rem;
   align-items: start;
   gap: var(--s-2);
-  padding: 5px var(--s-2) 6px 0;
+  padding: 0.3125rem var(--s-2) 0.375rem 0;
   border-bottom: 1px solid color-mix(in oklab, var(--foam) 5%, transparent);
   transition: background var(--t-quick) var(--ease-tide);
 }
 .task-row:hover {
   background: color-mix(in oklab, var(--foam) 5%, transparent);
-  box-shadow: inset 2px 0 0 color-mix(in oklab, var(--tod-light) 45%, transparent);
+  box-shadow: inset 0.125rem 0 0 color-mix(in oklab, var(--tod-light) 45%, transparent);
 }
 .task-row:hover .task-title {
-  transform: translateX(2px);
+  transform: translateX(0.125rem);
 }
 .task-row:hover .task-day {
   color: var(--tod-light);
@@ -289,7 +289,7 @@ button:active:not(:disabled),
 }
 .task-row[data-selected] {
   background: color-mix(in oklab, var(--foam) 8%, transparent);
-  box-shadow: inset 2px 0 0 var(--tod-light);
+  box-shadow: inset 0.125rem 0 0 var(--tod-light);
 }
 .task-row[data-done] {
   opacity: 0.5;
@@ -305,7 +305,7 @@ button:active:not(:disabled),
   flex-direction: column;
   align-items: flex-end;
   line-height: 1.1;
-  padding-top: 2px;
+  padding-top: 0.125rem;
   color: var(--ink-2);
 }
 .task-day-top {
@@ -313,7 +313,7 @@ button:active:not(:disabled),
   letter-spacing: 0.02em;
 }
 .task-day-bottom {
-  font-size: 10px;
+  font-size: 0.625rem;
   letter-spacing: 0.14em;
   color: var(--ink-4);
 }
@@ -335,14 +335,14 @@ button:active:not(:disabled),
 
 .task-check {
   position: relative;
-  width: 22px;
-  height: 22px;
+  width: 1.375rem;
+  height: 1.375rem;
   display: grid;
   place-items: center;
 }
 .task-check-ring {
-  width: 13px;
-  height: 13px;
+  width: 0.8125rem;
+  height: 0.8125rem;
   border: 1px solid var(--hairline-strong);
   border-radius: var(--r-round);
   transition:
@@ -364,8 +364,8 @@ button:active:not(:disabled),
 /* completing something drops a stone in the water */
 .task-check-ripple {
   position: absolute;
-  width: 13px;
-  height: 13px;
+  width: 0.8125rem;
+  height: 0.8125rem;
   border: 1px solid var(--tod-light);
   border-radius: var(--r-round);
   animation: ripple 600ms var(--ease-tide) forwards;
@@ -385,7 +385,7 @@ button:active:not(:disabled),
 .task-body {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 0.1875rem;
   min-width: 0;
 }
 .task-title {
@@ -404,7 +404,7 @@ button:active:not(:disabled),
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 4px;
+  gap: 0.25rem;
 }
 .task-pomos {
   color: var(--tod-light);
@@ -415,7 +415,7 @@ button:active:not(:disabled),
 .task-focus {
   color: var(--ink-4);
   opacity: 0;
-  padding-top: 3px;
+  padding-top: 0.1875rem;
   transition:
     opacity var(--t-quick) var(--ease-tide),
     color var(--t-quick) var(--ease-tide);
@@ -439,28 +439,28 @@ button:active:not(:disabled),
   0% {
     opacity: 1;
     transform: none;
-    max-height: 120px;
+    max-height: 7.5rem;
   }
   18% {
     opacity: 1;
-    transform: translateY(-2px);
+    transform: translateY(-0.125rem);
     filter: brightness(1.35);
   }
   55% {
     opacity: 0.55;
-    transform: translateY(-8px);
+    transform: translateY(-0.5rem);
     filter: brightness(1.2);
   }
   78% {
     opacity: 0;
-    transform: translateY(-12px);
-    max-height: 120px;
-    padding-top: 5px;
-    padding-bottom: 6px;
+    transform: translateY(-0.75rem);
+    max-height: 7.5rem;
+    padding-top: 0.3125rem;
+    padding-bottom: 0.375rem;
   }
   100% {
     opacity: 0;
-    transform: translateY(-12px);
+    transform: translateY(-0.75rem);
     max-height: 0;
     padding-top: 0;
     padding-bottom: 0;
@@ -471,17 +471,17 @@ button:active:not(:disabled),
 .foam {
   position: absolute;
   left: 0;
-  top: 6px;
+  top: 0.375rem;
   pointer-events: none;
 }
 .foam-speck {
   position: absolute;
-  width: 4px;
-  height: 4px;
+  width: 0.25rem;
+  height: 0.25rem;
   border-radius: var(--r-round);
   background: var(--tod-light);
   opacity: 0;
-  left: calc(var(--i) * 13px);
+  left: calc(var(--i) * 0.8125rem);
   animation: foam-rise 700ms var(--ease-tide) forwards;
   animation-delay: calc(120ms + var(--i) * 60ms);
 }
@@ -492,7 +492,7 @@ button:active:not(:disabled),
   }
   100% {
     opacity: 0;
-    transform: translate(calc(var(--i) * 4px - 6px), -26px) scale(0.4);
+    transform: translate(calc(var(--i) * 0.25rem - 0.375rem), -1.625rem) scale(0.4);
   }
 }
 
@@ -510,8 +510,8 @@ button:active:not(:disabled),
   display: flex;
   flex-direction: column;
   gap: var(--s-2);
-  min-width: 240px;
-  max-width: 280px;
+  min-width: 15rem;
+  max-width: 17.5rem;
 }
 .confirm-title {
   margin: 0;
@@ -527,8 +527,8 @@ button:active:not(:disabled),
 }
 .hold-button {
   position: relative;
-  width: 48px;
-  height: 48px;
+  width: 3rem;
+  height: 3rem;
   display: grid;
   place-items: center;
   border-radius: var(--r-round);
@@ -560,8 +560,8 @@ button:active:not(:disabled),
 .hold-ring {
   position: absolute;
   inset: 0;
-  width: 48px;
-  height: 48px;
+  width: 3rem;
+  height: 3rem;
   transform: rotate(-90deg);
   fill: none;
   stroke-width: 1.5;
@@ -644,7 +644,7 @@ button:active:not(:disabled),
 @keyframes toast-in {
   from {
     opacity: 0;
-    transform: translate(-50%, 10px);
+    transform: translate(-50%, 0.625rem);
   }
   to {
     opacity: 1;
@@ -652,8 +652,8 @@ button:active:not(:disabled),
   }
 }
 .toast-mark {
-  width: 5px;
-  height: 5px;
+  width: 0.3125rem;
+  height: 0.3125rem;
   border-radius: var(--r-round);
   background: var(--tod-light);
 }
@@ -687,8 +687,8 @@ button:active:not(:disabled),
   border-color: var(--hairline-strong);
 }
 .quick-add-mark {
-  width: 5px;
-  height: 5px;
+  width: 0.3125rem;
+  height: 0.3125rem;
   border-radius: var(--r-round);
   background: var(--tod-light);
   opacity: 0.55;
@@ -704,8 +704,8 @@ button:active:not(:disabled),
 }
 .quick-add-more {
   flex: none;
-  width: 26px;
-  height: 26px;
+  width: 1.625rem;
+  height: 1.625rem;
   color: var(--ink-3);
 }
 .quick-add-more:hover {
@@ -751,7 +751,7 @@ button:active:not(:disabled),
   top: calc(100% + var(--s-2));
   left: 0;
   z-index: var(--z-drawer);
-  min-width: 180px;
+  min-width: 11.25rem;
   padding: var(--s-3);
   border: 1px solid var(--hairline);
   border-radius: var(--r-md);
@@ -765,7 +765,7 @@ button:active:not(:disabled),
 @keyframes rise {
   from {
     opacity: 0;
-    transform: translateY(4px);
+    transform: translateY(0.25rem);
   }
 }
 
@@ -809,7 +809,7 @@ button:active:not(:disabled),
   display: flex;
   align-items: center;
   gap: var(--s-2);
-  padding-bottom: 2px;
+  padding-bottom: 0.125rem;
   border-bottom: 1px solid transparent;
   color: var(--ink-4);
   transition: border-color var(--t-quick) var(--ease-tide);
@@ -819,7 +819,7 @@ button:active:not(:disabled),
   color: var(--ink-2);
 }
 .search-field input {
-  width: 92px;
+  width: 5.75rem;
   color: var(--ink-1);
 }
 
@@ -844,7 +844,7 @@ button:active:not(:disabled),
   right: 0;
   bottom: 0;
   z-index: calc(var(--z-drawer) + 1);
-  width: min(430px, 46vw);
+  width: min(26.875rem, 46vw);
   padding: var(--s-5) var(--s-5) var(--s-6);
   overflow-y: auto;
   background: color-mix(in oklab, var(--abyss) 82%, var(--deep));
@@ -853,7 +853,7 @@ button:active:not(:disabled),
 }
 @keyframes slide {
   from {
-    transform: translateX(18px);
+    transform: translateX(1.125rem);
     opacity: 0;
   }
 }
@@ -935,8 +935,8 @@ button:active:not(:disabled),
   text-decoration: line-through;
 }
 .subtask-check {
-  width: 11px;
-  height: 11px;
+  width: 0.6875rem;
+  height: 0.6875rem;
   border: 1px solid var(--hairline-strong);
   border-radius: var(--r-round);
   flex: none;
@@ -947,8 +947,8 @@ button:active:not(:disabled),
 }
 .subtask-remove {
   margin-left: auto;
-  width: 22px;
-  height: 22px;
+  width: 1.375rem;
+  height: 1.375rem;
   opacity: 0;
 }
 .subtasks li:hover .subtask-remove {
@@ -987,7 +987,7 @@ button:active:not(:disabled),
 .week-figures {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0.125rem;
 }
 .week-number {
   font-family: var(--font-ui);
@@ -1002,19 +1002,19 @@ button:active:not(:disabled),
 .week-days {
   display: flex;
   align-items: flex-end;
-  gap: 5px;
-  height: 42px;
+  gap: 0.3125rem;
+  height: 2.625rem;
 }
 .week-day {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 0.25rem;
   justify-content: flex-end;
   height: 100%;
 }
 .week-bar {
-  width: 4px;
+  width: 0.25rem;
   border-radius: var(--r-round);
   background: var(--tod-light);
   opacity: 0.85;
@@ -1024,7 +1024,7 @@ button:active:not(:disabled),
   opacity: 1;
 }
 .week-name {
-  font-size: 9px;
+  font-size: 0.5625rem;
   letter-spacing: 0.06em;
   color: var(--ink-4);
 }
@@ -1051,18 +1051,18 @@ button:active:not(:disabled),
 }
 .tide-now {
   position: absolute;
-  top: -3px;
+  top: -0.1875rem;
   width: 1px;
-  height: 7px;
+  height: 0.4375rem;
   background: var(--tod-light);
   transition: left var(--t-slow) var(--ease-tide);
 }
 .tide-buoy {
   position: absolute;
-  top: -3px;
-  width: 6px;
-  height: 6px;
-  margin-left: -3px;
+  top: -0.1875rem;
+  width: 0.375rem;
+  height: 0.375rem;
+  margin-left: -0.1875rem;
   border: 1px solid var(--tod-light);
   border-radius: var(--r-round);
   background: color-mix(in oklab, var(--abyss) 70%, transparent);
@@ -1078,8 +1078,8 @@ button:active:not(:disabled),
   position: relative;
   display: grid;
   place-items: center;
-  width: 128px;
-  height: 128px;
+  width: 8rem;
+  height: 8rem;
   margin: var(--s-4) 0;
 }
 .breath-ring {
@@ -1090,8 +1090,8 @@ button:active:not(:disabled),
 }
 .breath-core {
   position: absolute;
-  width: 46px;
-  height: 46px;
+  width: 2.875rem;
+  height: 2.875rem;
   border-radius: var(--r-round);
   background: radial-gradient(circle, var(--tod-light), transparent 70%);
 }
@@ -1112,7 +1112,7 @@ button:active:not(:disabled),
   animation: fade var(--t-quick) var(--ease-tide);
 }
 .palette {
-  width: min(560px, 82vw);
+  width: min(35rem, 82vw);
   border: 1px solid var(--hairline);
   border-radius: var(--r-md);
   background: color-mix(in oklab, var(--abyss) 86%, var(--midwater));
@@ -1179,9 +1179,9 @@ button:active:not(:disabled),
 }
 .chat-row {
   display: grid;
-  grid-template-columns: 58px minmax(0, 1fr) auto auto;
+  grid-template-columns: 3.625rem minmax(0, 1fr) auto auto;
   align-items: baseline;
-  gap: 3px var(--s-3);
+  gap: 0.1875rem var(--s-3);
   width: 100%;
   padding: var(--s-2);
   margin-left: calc(var(--s-2) * -1);
@@ -1196,7 +1196,7 @@ button:active:not(:disabled),
 }
 .chat-row:hover {
   background: color-mix(in oklab, var(--foam) 6%, transparent);
-  box-shadow: inset 2px 0 0 color-mix(in oklab, var(--tod-light) 55%, transparent);
+  box-shadow: inset 0.125rem 0 0 color-mix(in oklab, var(--tod-light) 55%, transparent);
 }
 .chat-when {
   font-size: var(--step--1);
@@ -1210,7 +1210,7 @@ button:active:not(:disabled),
 .chat-labels {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
+  gap: 0.25rem;
 }
 .chat-away {
   white-space: nowrap;
@@ -1228,8 +1228,8 @@ button:active:not(:disabled),
   border-top: 1px solid var(--hairline);
 }
 .chat-mark {
-  width: 5px;
-  height: 5px;
+  width: 0.3125rem;
+  height: 0.3125rem;
   border-radius: var(--r-round);
   background: var(--tod-light);
   flex: none;
@@ -1294,21 +1294,21 @@ button:active:not(:disabled),
   }
   /* 30px is fine for a cursor and mean for a thumb */
   .icon-button {
-    width: 38px;
-    height: 38px;
+    width: 2.375rem;
+    height: 2.375rem;
   }
   .task-check {
-    width: 34px;
-    height: 34px;
-    margin: -6px;
+    width: 2.125rem;
+    height: 2.125rem;
+    margin: -0.375rem;
   }
   .hold-button,
   .hold-ring {
-    width: 58px;
-    height: 58px;
+    width: 3.625rem;
+    height: 3.625rem;
   }
   .chip-button {
-    padding: 5px var(--s-2);
+    padding: 0.3125rem var(--s-2);
   }
 }
 /* the pointer that can hover is the one that can also press ⌘K */

@@ -135,18 +135,18 @@ button {
 /* focus ring: a ripple of light, not a blue browser rectangle */
 :focus-visible {
   outline: 1px solid color-mix(in oklab, var(--foam) 55%, transparent);
-  outline-offset: 3px;
+  outline-offset: 0.1875rem;
   border-radius: var(--r-sm);
 }
 
 /* scrollbars belong to the water */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 0.625rem;
 }
 ::-webkit-scrollbar-thumb {
   background: color-mix(in oklab, var(--foam) 12%, transparent);
   border-radius: var(--r-round);
-  border: 3px solid transparent;
+  border: 0.1875rem solid transparent;
   background-clip: content-box;
 }
 ::-webkit-scrollbar-thumb:hover {
