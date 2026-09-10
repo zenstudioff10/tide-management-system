@@ -1,0 +1,106 @@
+/* The launch sequence. The water is animated in the shader; everything here is
+   the arrival — declarative keyframes with delays, so no JavaScript runs per
+   frame for any of it. [data-intro='done'] cancels the lot. */
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes draw-across {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* the wordmark begins large and centred, then settles into its corner.
+   --wm-dx/--wm-dy are measured once on mount (FLIP), so the destination is
+   wherever the header actually put it. */
+@keyframes wordmark-arrive {
+  0% {
+    opacity: 0;
+    transform: translate(var(--wm-dx, 0px), var(--wm-dy, 0px)) scale(3.1);
+  }
+  14% {
+    opacity: 1;
+    transform: translate(var(--wm-dx, 0px), var(--wm-dy, 0px)) scale(3.1);
+  }
+  62% {
+    opacity: 1;
+    transform: translate(var(--wm-dx, 0px), var(--wm-dy, 0px)) scale(3.1);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.app-content[data-intro='running'] {
+  /* the shell itself no longer cross-fades; each block arrives on its own beat */
+  opacity: 1;
+  transition: none;
+}
+
+[data-intro='running'] .wordmark {
+  animation: wordmark-arrive 2.15s var(--ease-tide) both;
+  transform-origin: left center;
+  will-change: transform;
+}
+
+[data-intro='running'] .surface-count,
+[data-intro='running'] .surface-head-right {
+  animation: rise-in 700ms var(--ease-tide) 2.05s both;
+}
+
+[data-intro='running'] .surface-clock h1 {
+  animation: rise-in 900ms var(--ease-tide) 1.6s both;
+}
+[data-intro='running'] .surface-date {
+  animation: rise-in 800ms var(--ease-tide) 1.68s both;
+}
+[data-intro='running'] .surface-clock::before {
+  animation: rise-in 1100ms var(--ease-tide) 1.5s both;
+}
+
+[data-intro='running'] .surface-tide {
+  animation: rise-in 700ms var(--ease-tide) 1.75s both;
+}
+[data-intro='running'] .tide-track > * {
+  animation: draw-across 900ms var(--ease-tide) 1.82s both;
+  transform-origin: left center;
+}
+
+[data-intro='running'] .surface-next {
+  animation: rise-in 900ms var(--ease-tide) 1.78s both;
+}
+/* --i is the row's index, handed down from Surface.tsx */
+[data-intro='running'] .agenda li,
+[data-intro='running'] .stone {
+  animation: rise-in 620ms var(--ease-tide) both;
+  animation-delay: calc(var(--intro-base, 1.85s) + var(--i, 0) * 45ms);
+}
+[data-intro='running'] .stone {
+  --intro-base: 2.05s;
+}
+
+[data-intro='running'] .surface-foot .dive-gauge {
+  animation: rise-in 700ms var(--ease-tide) 2s both;
+}
+[data-intro='running'] .surface-capture {
+  animation: rise-in 700ms var(--ease-tide) 2.15s both;
+}
+
+/* skipped, or reduced motion: everything is simply already here */
+[data-intro='done'] *,
+[data-intro='done'] *::before {
+  animation: none !important;
+}

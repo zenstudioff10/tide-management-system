@@ -1,0 +1,162 @@
+@import 'tailwindcss';
+
+@import '@fontsource/instrument-serif/400.css';
+@import '@fontsource/instrument-serif/400-italic.css';
+@import '@fontsource-variable/inter';
+@import '@fontsource/jetbrains-mono/400.css';
+@import '@fontsource/jetbrains-mono/500.css';
+
+@import './design/tokens.css';
+@import './design/components.css';
+@import './design/routes.css';
+@import './design/intro.css';
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--abyss);
+  color: var(--ink-1);
+  font-family: var(--font-ui);
+  font-size: var(--step-0);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+  /* the whole app is a window onto water; nothing selects by accident */
+  user-select: none;
+  cursor: default;
+}
+
+input,
+textarea {
+  user-select: text;
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  outline: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: default;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--shoal) 45%, transparent);
+}
+
+/* ── shared primitives ─────────────────────────────────────────────── */
+
+/* a label that behaves like a depth marking on an instrument */
+.gauge-label {
+  font-size: var(--step--1);
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--foam) 52%, transparent);
+  font-variant-numeric: tabular-nums;
+}
+
+.hairline {
+  height: 1px;
+  background: var(--hairline);
+  border: 0;
+}
+
+/* text buttons underlined by a hairline that fills on hover.
+   no pills, no fills, no shadows. */
+.quiet-button {
+  position: relative;
+  padding: var(--s-1) 0;
+  color: var(--ink-2);
+  transition: color var(--t-quick) var(--ease-tide);
+}
+.quiet-button::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--hairline);
+  transform-origin: left;
+  transform: scaleX(0.999);
+  transition:
+    background var(--t-quick) var(--ease-tide),
+    transform var(--t-mid) var(--ease-tide);
+}
+.quiet-button:hover {
+  color: var(--ink-1);
+}
+.quiet-button:hover::after {
+  background: var(--hairline-strong);
+}
+.quiet-button:disabled {
+  color: var(--ink-4);
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* section titles speak in the serif that gives the clock its character;
+   .gauge-label stays what it always was — a field label, a unit, a count */
+.heading {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--step-2);
+  line-height: 1.2;
+  letter-spacing: -0.005em;
+  color: var(--ink-1);
+  margin: 0;
+}
+
+.display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.015em;
+}
+
+/* focus ring: a ripple of light, not a blue browser rectangle */
+:focus-visible {
+  outline: 1px solid color-mix(in oklab, var(--foam) 55%, transparent);
+  outline-offset: 3px;
+  border-radius: var(--r-sm);
+}
+
+/* scrollbars belong to the water */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: color-mix(in oklab, var(--foam) 12%, transparent);
+  border-radius: var(--r-round);
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in oklab, var(--foam) 22%, transparent);
+  background-clip: content-box;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* the capture bar window is transparent down to the desktop */
+.quick-add-body {
+  background: transparent;
+  overflow: hidden;
+}

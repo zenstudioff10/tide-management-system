@@ -1,0 +1,88 @@
+/* Tide design tokens.
+   Fixed palette below; the --tod-* variables are rewritten at runtime by
+   useTimeOfDay() so the interface and the water always agree on the hour. */
+
+:root {
+  /* --- water, deepest to lightest --- */
+  --abyss: #05090e;
+  --hadal: #071219;
+  --deep: #0a1c26;
+  --midwater: #113240;
+  --tide: #1b5a63;
+  --shoal: #2e8a88;
+  --foam: #bfdcd8;
+  --moon: #f2efe6;
+
+  /* --- shore --- */
+  --bone: #e9e3d6;
+  --sand: #c9bfaa;
+
+  /* --- the only accent. needs-attention, and a running clock. --- */
+  --coral: #dd6b4d;
+
+  /* --- time of day, overwritten each minute from palette.ts --- */
+  --tod-sky: #0a1c26;
+  --tod-horizon: #1b5a63;
+  --tod-light: #bfdcd8;
+  --tod-glow: #2e8a88;
+
+  /* the ground under type: the hour's own water, pulled toward the abyss.
+     never neutral grey, so it can never look like a card. */
+  --veil: color-mix(in oklab, var(--tod-sky) 62%, #05090e);
+
+  /* --- ink on water --- */
+  --ink-1: color-mix(in oklab, var(--moon) 94%, transparent);
+  --ink-2: color-mix(in oklab, var(--foam) 68%, transparent);
+  --ink-3: color-mix(in oklab, var(--foam) 42%, transparent);
+  --ink-4: color-mix(in oklab, var(--foam) 22%, transparent);
+  --hairline: color-mix(in oklab, var(--foam) 16%, transparent);
+  --hairline-strong: color-mix(in oklab, var(--foam) 30%, transparent);
+
+  /* --- type --- */
+  --font-display: 'Instrument Serif', 'Iowan Old Style', Georgia, serif;
+  --font-ui: 'Inter Variable', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+
+  --step--1: 0.75rem;
+  --step-0: 0.875rem;
+  --step-1: 1rem;
+  --step-2: 1.375rem;
+  --step-3: 2rem;
+  --step-4: 3.25rem;
+  --step-5: clamp(4.5rem, 11vw, 9.5rem);
+
+  /* --- rhythm. no arbitrary numbers past this line. --- */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 20px;
+  --s-5: 32px;
+  --s-6: 52px;
+  --s-7: 84px;
+
+  /* --- radii: small and deliberate. round is for stones only. --- */
+  --r-sm: 4px;
+  --r-md: 8px;
+  --r-round: 999px;
+
+  /* --- motion: slow in, slower out --- */
+  --ease-tide: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-sink: cubic-bezier(0.4, 0, 0.2, 1);
+  --t-quick: 240ms;
+  --t-mid: 480ms;
+  --t-slow: 900ms;
+  --breath: 6s;
+
+  --z-water: 0;
+  --z-content: 10;
+  --z-drawer: 40;
+  --z-palette: 60;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --t-quick: 1ms;
+    --t-mid: 1ms;
+    --t-slow: 1ms;
+  }
+}

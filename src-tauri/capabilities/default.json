@@ -1,0 +1,16 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Tide: local file storage through custom commands, native notifications, and a file picker for export/import.",
+  "windows": ["main", "capture"],
+  "permissions": [
+    "core:default",
+    "core:window:allow-show",
+    "core:window:allow-hide",
+    "core:window:allow-center",
+    "core:window:allow-set-focus",
+    "notification:default",
+    "dialog:default",
+    "os:default"
+  ]
+}

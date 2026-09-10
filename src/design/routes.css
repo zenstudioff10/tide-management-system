@@ -1,0 +1,1060 @@
+/* ── the surface ────────────────────────────────────────────────────── */
+
+.surface {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(430px, 1.08fr);
+  grid-template-rows: auto minmax(0, 1fr) auto auto auto;
+  grid-template-areas:
+    'head head'
+    'clock next'
+    'tide tide'
+    'foot foot'
+    'capture capture';
+  gap: var(--s-5) var(--s-6);
+  padding: var(--s-5) var(--s-7) var(--s-6);
+}
+
+.surface-head {
+  grid-area: head;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  /* leaves room for the traffic lights on the hidden title bar */
+  padding-left: 62px;
+  -webkit-app-region: drag;
+}
+.surface-head-right {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  -webkit-app-region: no-drag;
+}
+.surface-count-late {
+  color: var(--coral);
+}
+.wordmark {
+  font-size: var(--step-2);
+  letter-spacing: 0.02em;
+  color: var(--ink-2);
+}
+
+.surface-clock {
+  grid-area: clock;
+  align-self: end;
+  position: relative;
+  padding-bottom: var(--s-3);
+}
+/* ink pooled under the clock, fading out long before it becomes a panel */
+.surface-clock::before {
+  content: '';
+  position: absolute;
+  inset: -18% -30% -22% -22%;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    78% 72% at 34% 56%,
+    color-mix(in oklab, var(--veil) calc(38% + var(--tod-scrim, 0.2) * 90%), transparent),
+    color-mix(in oklab, var(--veil) 16%, transparent) 52%,
+    transparent 86%
+  );
+}
+
+.surface-head,
+.surface-tide,
+.surface-foot,
+.surface-capture {
+  position: relative;
+}
+.clock {
+  font-size: var(--step-5);
+  line-height: 0.84;
+  color: var(--tod-light);
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-3);
+  font-variant-numeric: tabular-nums;
+}
+.clock-meridiem {
+  font-family: var(--font-ui);
+  font-size: var(--step-1);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.surface-date {
+  margin: var(--s-3) 0 0;
+  font-size: var(--step-1);
+  color: var(--ink-2);
+  letter-spacing: 0.02em;
+}
+.surface-next {
+  grid-area: next;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  min-height: 0;
+  /* the veil bleeds past the text so every fade happens in empty space */
+  margin: calc(var(--s-4) * -1) calc(var(--s-5) * -1) calc(var(--s-4) * -1) calc(var(--s-4) * -1);
+  padding: var(--s-5) var(--s-4);
+  background: linear-gradient(
+    100deg,
+    color-mix(in oklab, var(--veil) 40%, transparent),
+    color-mix(in oklab, var(--veil) 74%, transparent) 34%,
+    color-mix(in oklab, var(--veil) 62%, transparent)
+  );
+  -webkit-mask-image:
+    linear-gradient(180deg, transparent, #000 6%, #000 97%, transparent),
+    linear-gradient(90deg, transparent, #000 9%, #000 93%, transparent);
+  mask-image:
+    linear-gradient(180deg, transparent, #000 6%, #000 97%, transparent),
+    linear-gradient(90deg, transparent, #000 9%, #000 93%, transparent);
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+}
+
+.agenda-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-4);
+  width: 100%;
+  padding-bottom: var(--s-3);
+  color: var(--ink-2);
+}
+.agenda-head .gauge-label {
+  color: var(--ink-2);
+}
+.agenda-head:hover .agenda-more {
+  color: var(--tod-light);
+}
+
+/* the list you see the instant the app opens */
+.agenda {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 var(--s-4);
+  overflow-y: auto;
+  min-height: 0;
+  -webkit-mask-image: linear-gradient(180deg, #000 90%, transparent);
+  mask-image: linear-gradient(180deg, #000 90%, transparent);
+}
+.agenda-row {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr);
+  align-items: baseline;
+  gap: 3px var(--s-3);
+  width: 100%;
+  padding: var(--s-2) var(--s-2) var(--s-2) 0;
+  margin-left: calc(var(--s-2) * -1);
+  padding-left: var(--s-2);
+  border-radius: var(--r-md);
+  text-align: left;
+  transition: background var(--t-quick) var(--ease-tide);
+}
+.agenda-row:hover {
+  background: color-mix(in oklab, var(--foam) 6%, transparent);
+}
+.agenda-day {
+  font-size: var(--step--1);
+  color: var(--ink-2);
+  letter-spacing: 0.02em;
+}
+.agenda-day[data-today] {
+  color: var(--tod-light);
+}
+.agenda-day[data-late] {
+  color: var(--coral);
+}
+.agenda-title {
+  min-width: 0;
+  color: var(--ink-1);
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+.agenda-labels {
+  grid-column: 2;
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  padding-top: 3px;
+}
+.agenda-buoy {
+  margin: 0;
+  padding-top: var(--s-2);
+  color: var(--tod-light);
+}
+.surface-next-empty {
+  margin: 0;
+  color: var(--ink-4);
+}
+
+.surface-tide {
+  grid-area: tide;
+}
+
+.surface-foot {
+  grid-area: foot;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--s-5);
+}
+
+.stones {
+  display: flex;
+  gap: var(--s-5);
+}
+.stone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-2);
+  color: var(--ink-3);
+  transition: color var(--t-quick) var(--ease-tide);
+}
+.stone-face {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-round);
+  transition:
+    border-color var(--t-mid) var(--ease-tide),
+    background var(--t-mid) var(--ease-tide),
+    transform var(--t-mid) var(--ease-tide);
+}
+.stone:hover {
+  color: var(--ink-1);
+}
+.stone:hover .stone-face {
+  border-color: color-mix(in oklab, var(--tod-light) 55%, transparent);
+  background: color-mix(in oklab, var(--tod-light) 9%, transparent);
+  transform: translateY(-2px);
+}
+
+.surface-capture {
+  grid-area: capture;
+}
+.surface-capture .quick-add input::placeholder {
+  color: var(--ink-3);
+}
+
+/* ── the depths ─────────────────────────────────────────────────────── */
+
+.depths,
+.timer-route,
+.reminders,
+.settings,
+.focus {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* the lists, across the top of the column */
+.board-tabs {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+}
+.board-tab {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: var(--s-1) var(--s-2);
+  border-radius: var(--r-sm);
+  font-size: var(--step-2);
+  color: var(--ink-4);
+  transition:
+    color var(--t-quick) var(--ease-tide),
+    background var(--t-quick) var(--ease-tide);
+}
+.board-tab:hover {
+  color: var(--ink-2);
+  background: color-mix(in oklab, var(--foam) 5%, transparent);
+}
+.board-tab[data-on] {
+  color: var(--tod-light);
+  background: color-mix(in oklab, var(--tod-light) 8%, transparent);
+}
+.board-count {
+  font-size: 10px;
+  letter-spacing: 0;
+  color: var(--ink-4);
+}
+.board-tab[data-on] .board-count {
+  color: color-mix(in oklab, var(--tod-light) 65%, transparent);
+}
+.board-add {
+  width: 22px;
+  height: 22px;
+  color: var(--ink-4);
+}
+.board-new {
+  width: 130px;
+}
+
+.depths-head {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  padding: var(--s-4) var(--s-6) var(--s-3);
+  padding-left: 78px;
+  border-bottom: 1px solid var(--hairline);
+  -webkit-app-region: drag;
+}
+.depths-head > *,
+.head-row > *,
+.filter-bar {
+  -webkit-app-region: no-drag;
+}
+
+/* two rows: what you are looking at, then how you are looking at it */
+.depths-head.stacked {
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--s-3);
+  padding-bottom: var(--s-2);
+}
+.head-row {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+}
+
+.filter-menu {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  min-width: 250px;
+  max-width: 320px;
+}
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+
+.depths-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 var(--s-6) var(--s-5);
+}
+
+/* one place to add, for the whole column. what you type files itself. */
+.depths-capture {
+  padding: var(--s-2) var(--s-6) var(--s-4);
+  max-width: 1080px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* a ground to read on: ink, soft-edged, no card and no frosted glass.
+   the water keeps moving around and above it. */
+.depths-sheet {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: var(--s-4) var(--s-5) var(--s-5);
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--veil) 52%, transparent),
+    color-mix(in oklab, var(--veil) 82%, transparent) 22%,
+    color-mix(in oklab, var(--veil) 88%, transparent)
+  );
+  -webkit-mask-image:
+    linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent),
+    linear-gradient(180deg, transparent, #000 5%, #000 100%);
+  mask-image:
+    linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent),
+    linear-gradient(180deg, transparent, #000 5%, #000 100%);
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+}
+
+.lane {
+  padding: var(--s-4) 0 var(--s-2);
+  border-bottom: 1px solid color-mix(in oklab, var(--foam) 6%, transparent);
+  /* each lane sits a little further from the light */
+  background: linear-gradient(
+    180deg,
+    rgb(5 9 14 / calc(var(--lane-depth, 0) * 0.20)),
+    rgb(5 9 14 / calc(0.04 + var(--lane-depth, 0) * 0.26))
+  );
+}
+
+.lane-head {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  margin-bottom: var(--s-2);
+}
+.lane-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--r-round);
+  flex: none;
+}
+.lane-name {
+  font-size: var(--step-2);
+}
+.lane-count {
+  font-size: var(--step--1);
+  color: var(--ink-4);
+}
+.lane-rule {
+  flex: 1;
+  height: 1px;
+  background: var(--hairline);
+}
+.lane-add {
+  opacity: 0;
+}
+.lane:hover .lane-add {
+  opacity: 1;
+}
+
+.lane-head {
+  opacity: calc(1 - var(--lane-depth, 0) * 0.22);
+  transition: opacity var(--t-mid) var(--ease-tide);
+}
+.lane:hover .lane-head {
+  opacity: 1;
+}
+.lane-slot[data-drop] {
+  box-shadow: inset 0 1px 0 var(--tod-light);
+}
+.lane-empty {
+  padding: var(--s-2) 0;
+  margin: 0;
+  color: var(--ink-4);
+}
+
+.depths-floor {
+  display: flex;
+  justify-content: center;
+  padding: var(--s-6) 0 var(--s-4);
+  opacity: 0.5;
+}
+
+/* ── the briefing ───────────────────────────────────────────────────── */
+
+.brief {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.brief-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 var(--s-6) var(--s-7);
+}
+.heading-note {
+  padding-left: var(--s-3);
+}
+.brief-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  padding: var(--s-4) 0 var(--s-5);
+}
+.brief-block + .brief-block {
+  border-top: 1px solid color-mix(in oklab, var(--foam) 6%, transparent);
+}
+.brief-note {
+  margin: var(--s-2) 0 0;
+  color: var(--ink-2);
+}
+.brief-note strong {
+  font-weight: 500;
+  color: var(--tod-light);
+}
+
+.load-figures {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-6);
+  padding: var(--s-2) 0 var(--s-4);
+}
+.load-figure {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.load-number {
+  font-family: var(--font-ui);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--step-4);
+  line-height: 1;
+  color: var(--tod-light);
+}
+.load-number[data-warn] {
+  color: color-mix(in oklab, var(--tod-light) 55%, var(--coral));
+}
+.load-number[data-late] {
+  color: var(--coral);
+}
+
+.load-days {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--s-3);
+  height: 74px;
+  padding-top: var(--s-2);
+}
+.load-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  height: 100%;
+  min-width: 26px;
+}
+.load-bar {
+  width: 6px;
+  border-radius: var(--r-round);
+  background: var(--tod-light);
+  opacity: 0.8;
+}
+.load-bar[data-empty] {
+  background: var(--ink-4);
+  opacity: 1;
+}
+.load-day[data-peak] .load-bar {
+  background: var(--coral);
+  opacity: 1;
+}
+.load-count {
+  font-size: var(--step--1);
+  color: var(--ink-2);
+  height: 14px;
+}
+.load-name {
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  color: var(--ink-4);
+}
+
+.brief-row {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr) auto auto;
+  align-items: baseline;
+  gap: var(--s-3);
+  width: 100%;
+  padding: var(--s-2);
+  margin-left: calc(var(--s-2) * -1);
+  border-radius: var(--r-md);
+  text-align: left;
+  transition: background var(--t-quick) var(--ease-tide);
+}
+.brief-row:hover {
+  background: color-mix(in oklab, var(--foam) 6%, transparent);
+}
+.brief-when {
+  font-size: var(--step--1);
+  color: var(--ink-3);
+}
+.brief-when[data-soon] {
+  color: var(--tod-light);
+}
+.brief-when[data-late] {
+  color: var(--coral);
+}
+.brief-title {
+  min-width: 0;
+  color: var(--ink-1);
+  overflow-wrap: anywhere;
+}
+.brief-labels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.brief-date {
+  font-size: var(--step--1);
+  color: var(--ink-4);
+}
+
+.important-dim {
+  min-width: 88px;
+}
+
+/* ── clock & timer ──────────────────────────────────────────────────── */
+
+.mode-switch {
+  display: flex;
+  gap: var(--s-4);
+}
+.mode-key {
+  padding: var(--s-1) var(--s-2);
+  margin: 0 calc(var(--s-1) * -1);
+  border-radius: var(--r-sm);
+  font-size: var(--step--1);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-4);
+  transition:
+    color var(--t-quick) var(--ease-tide),
+    background var(--t-quick) var(--ease-tide);
+}
+.mode-key:hover {
+  color: var(--ink-2);
+  background: color-mix(in oklab, var(--foam) 6%, transparent);
+}
+.mode-key[data-on] {
+  color: var(--tod-light);
+}
+
+.timer-stage {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  padding: var(--s-5) var(--s-6);
+  overflow-y: auto;
+}
+.timer-sheet {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-4);
+  width: min(680px, 100%);
+  padding: var(--s-7) var(--s-6);
+}
+/* a pool of deeper water, not a panel — no edge anywhere */
+.timer-sheet::before {
+  content: '';
+  position: absolute;
+  inset: -12% -22%;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    58% 54% at 50% 46%,
+    color-mix(in oklab, var(--veil) calc(46% + var(--tod-scrim, 0.2) * 90%), transparent),
+    color-mix(in oklab, var(--veil) 18%, transparent) 58%,
+    transparent 84%
+  );
+}
+
+.timer-face {
+  margin: 0;
+  /* the display serif, like the homescreen clock — JetBrains Mono draws a
+     dotted zero that reads as a glyph error at this size */
+  font-size: clamp(3.5rem, 9vw, 7.5rem);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-1);
+  transition: color var(--t-mid) var(--ease-tide);
+}
+.timer-face[data-running] {
+  color: var(--tod-light);
+}
+
+/* the session drawn as water leaving the glass */
+.timer-drain {
+  width: min(360px, 70%);
+  height: 1px;
+  background: var(--hairline);
+}
+.timer-drain span {
+  display: block;
+  height: 1px;
+  background: var(--tod-light);
+  transition: width 400ms linear;
+}
+
+.timer-phase {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+}
+.timer-pips {
+  display: flex;
+  gap: 5px;
+  transition: opacity var(--t-mid) var(--ease-tide);
+}
+.timer-pips[data-idle] {
+  opacity: 0.3;
+}
+.timer-pip {
+  width: 7px;
+  height: 7px;
+  border-radius: var(--r-round);
+  border: 1px solid var(--hairline-strong);
+}
+.timer-pip[data-on] {
+  background: var(--tod-light);
+  border-color: var(--tod-light);
+}
+
+.timer-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  margin-top: var(--s-2);
+}
+.icon-button.big {
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-round);
+  color: var(--ink-1);
+}
+.icon-button.big:hover {
+  border-color: color-mix(in oklab, var(--tod-light) 55%, transparent);
+  background: color-mix(in oklab, var(--tod-light) 9%, transparent);
+}
+
+.timer-settings,
+.timer-presets {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-4);
+  flex-wrap: wrap;
+  padding-top: var(--s-3);
+  border-top: 1px solid color-mix(in oklab, var(--foam) 6%, transparent);
+  width: 100%;
+}
+.stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  color: var(--ink-2);
+}
+.stepper-key {
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--r-round);
+  color: var(--ink-3);
+  font-size: var(--step-0);
+  line-height: 1;
+}
+.stepper-key:hover {
+  color: var(--tod-light);
+  background: color-mix(in oklab, var(--foam) 8%, transparent);
+}
+.stepper-value {
+  min-width: 20px;
+  text-align: center;
+  color: var(--ink-1);
+}
+.timer-custom {
+  width: 74px;
+}
+
+.lap-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: min(280px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  color: var(--ink-2);
+  max-height: 26vh;
+  overflow-y: auto;
+}
+.lap-list li {
+  display: flex;
+  gap: var(--s-3);
+  border-bottom: 1px solid color-mix(in oklab, var(--foam) 6%, transparent);
+  padding-bottom: var(--s-2);
+}
+
+.timer-foot {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-4);
+  padding: var(--s-3) var(--s-6) var(--s-5);
+}
+.timer-wall {
+  font-size: var(--step-2);
+  color: var(--ink-1);
+}
+.timer-foot-spacer {
+  flex: 1;
+}
+
+/* ── reminders ──────────────────────────────────────────────────────── */
+
+.reminder-compose {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: var(--s-4) var(--s-6);
+  border-bottom: 1px solid var(--hairline);
+  flex-wrap: wrap;
+}
+.reminder-compose-mark {
+  color: var(--tod-light);
+}
+.reminder-title {
+  flex: 1;
+  min-width: 180px;
+  color: var(--ink-1);
+}
+.reminder-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--s-4) var(--s-6) var(--s-7);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+}
+.reminder {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  padding: var(--s-3) 0;
+  border-bottom: 1px solid color-mix(in oklab, var(--foam) 6%, transparent);
+}
+.reminder-time {
+  color: var(--tod-light);
+  min-width: 52px;
+}
+.reminder[data-ringing] .reminder-time {
+  color: var(--coral);
+}
+.reminder-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.reminder-label {
+  margin: 0;
+  color: var(--ink-1);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.reminder-snoozes {
+  display: flex;
+  gap: var(--s-3);
+}
+.reminder-past {
+  opacity: 0.42;
+}
+.reminder-past-head {
+  margin-top: var(--s-5);
+}
+
+/* ── settings ───────────────────────────────────────────────────────── */
+
+.settings-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--s-5) var(--s-6) var(--s-7);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-6);
+  max-width: 940px;
+}
+.settings-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  padding-top: var(--s-3);
+  border-top: 1px solid var(--hairline);
+}
+.settings-note {
+  margin: 0;
+  max-width: 62ch;
+  color: var(--ink-3);
+}
+.settings-path {
+  font-size: var(--step--1);
+  color: var(--ink-4);
+  word-break: break-all;
+}
+
+.dimension {
+  padding: var(--s-3) 0;
+  border-bottom: 1px solid color-mix(in oklab, var(--foam) 6%, transparent);
+}
+.dimension-head {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--s-3);
+}
+.dimension-name {
+  font-size: var(--step-2);
+  font-family: var(--font-display);
+  color: var(--ink-1);
+  min-width: 160px;
+  border-bottom: 1px solid transparent;
+}
+.dimension-name:hover,
+.dimension-name:focus {
+  border-color: var(--hairline);
+}
+
+.option-rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  padding-left: var(--s-4);
+}
+.option-row {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+}
+.option-name {
+  flex: 1;
+  color: var(--ink-2);
+  border-bottom: 1px solid transparent;
+}
+.option-name:hover,
+.option-name:focus {
+  border-color: var(--hairline);
+  color: var(--ink-1);
+}
+.swatches {
+  display: flex;
+  gap: 4px;
+  padding: 4px 7px;
+  border-radius: var(--r-round);
+  background: color-mix(in oklab, var(--foam) 7%, transparent);
+  animation: rise var(--t-quick) var(--ease-tide);
+}
+/* the row shows the colour it is; the palette only opens when asked */
+.swatch-current {
+  opacity: 1;
+  width: 11px;
+  height: 11px;
+}
+.swatch-current:hover {
+  transform: scale(1.25);
+}
+.swatch {
+  width: 9px;
+  height: 9px;
+  border-radius: var(--r-round);
+  opacity: 0.3;
+  transition:
+    opacity var(--t-quick) var(--ease-tide),
+    transform var(--t-quick) var(--ease-tide);
+}
+.swatch:hover {
+  opacity: 0.75;
+}
+.swatch[data-on] {
+  opacity: 1;
+  transform: scale(1.35);
+}
+.dimension-add {
+  margin-top: var(--s-3);
+}
+
+.field-row {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--s-5);
+  flex-wrap: wrap;
+}
+.number-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+}
+.number-field .field {
+  width: 110px;
+}
+.slider-field input {
+  width: 132px;
+  accent-color: var(--tod-light);
+}
+.hotkey-display {
+  color: var(--tod-light);
+  font-size: var(--step-1);
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-3);
+  color: var(--ink-3);
+  transition: color var(--t-quick) var(--ease-tide);
+}
+.toggle[data-on] {
+  color: var(--ink-1);
+}
+.toggle-track {
+  position: relative;
+  width: 30px;
+  height: 12px;
+  border: 1px solid var(--hairline-strong);
+  border-radius: var(--r-round);
+}
+.toggle-bead {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 6px;
+  height: 6px;
+  border-radius: var(--r-round);
+  background: var(--ink-3);
+  transition:
+    left var(--t-quick) var(--ease-tide),
+    background var(--t-quick) var(--ease-tide);
+}
+.toggle[data-on] .toggle-bead {
+  left: 20px;
+  background: var(--tod-light);
+}
+
+/* ── narrow windows ─────────────────────────────────────────────────── */
+
+@media (max-width: 900px) {
+  .surface {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'head'
+      'clock'
+      'next'
+      'tide'
+      'foot'
+      'capture';
+    padding: var(--s-4) var(--s-5);
+    gap: var(--s-4);
+  }
+  .surface-next {
+    border-left: 0;
+    padding-left: 0;
+    border-top: 1px solid var(--hairline);
+    padding-top: var(--s-3);
+  }
+  .surface-foot {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--s-4);
+  }
+  .focus-body {
+    grid-template-columns: 60px minmax(0, 1fr);
+  }
+  .depths-scroll,
+  .reminder-list,
+  .settings-scroll,
+  .timer-columns {
+    padding-left: var(--s-5);
+    padding-right: var(--s-5);
+  }
+}
