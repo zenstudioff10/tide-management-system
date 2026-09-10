@@ -71,10 +71,17 @@
     align-items: center;
     row-gap: var(--s-2);
   }
-  /* iOS zooms the page in on any field under 16px, and never zooms back out */
-  input,
-  textarea,
-  select {
+  /* iOS zooms the page in on any field under 16px, and never zooms back out.
+     Qualified with html because index.css sets `font: inherit` on fields after
+     these imports, and that shorthand puts the size back to 14px. */
+  html input,
+  html textarea,
+  html select {
+    font-size: 16px;
+  }
+  /* the date and time fields carry a class, so they need naming outright */
+  .field,
+  .field.mono {
     font-size: 16px;
   }
 }
