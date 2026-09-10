@@ -119,7 +119,11 @@ export function Ocean({ mode = 'shader' }: Props) {
     let reveal = 0
 
     const resize = () => {
-      const dpr = Math.min(2, window.devicePixelRatio || 1)
+      // a phone paints this shader on a battery. Two device pixels per CSS pixel
+      // on a 3x screen is 1.3 million fragments a frame for caustics nobody is
+      // holding still enough to study.
+      const ceiling = window.matchMedia('(max-width: 640px)').matches ? 1.5 : 2
+      const dpr = Math.min(ceiling, window.devicePixelRatio || 1)
       const w = Math.floor(canvas.clientWidth * dpr)
       const h = Math.floor(canvas.clientHeight * dpr)
       if (canvas.width !== w || canvas.height !== h) {

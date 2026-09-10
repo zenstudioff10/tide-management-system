@@ -1,0 +1,404 @@
+/* ── the hand ───────────────────────────────────────────────────────── */
+/* Imported last on purpose. Everything above this line was written for a
+   pointer and a window with room to spare; every rule here is the correction
+   for a thumb and a phone, and it has to win on source order. */
+
+/* --- 1. a thumb, at any width --------------------------------------- */
+/* 38px was already the touch size. It is still under what a thumb lands on. */
+@media (pointer: coarse) {
+  .icon-button {
+    width: 44px;
+    height: 44px;
+  }
+  .task-check {
+    width: 40px;
+    height: 40px;
+    margin: -8px;
+  }
+  .board-add {
+    width: 36px;
+    height: 36px;
+    /* it sits in a scrolling row of tabs, which was shrinking it to 14px */
+    flex: none;
+  }
+  /* the colour dots stay 9px — the colour is set inline, so padding would only
+     make a 26px blob. The hit area grows around them instead. */
+  .swatch {
+    position: relative;
+  }
+  .swatch::after {
+    content: '';
+    position: absolute;
+    inset: -10px;
+  }
+  /* 18px was a target for a mouse. A minute is not worth aiming for. */
+  .stepper-key {
+    width: 36px;
+    height: 36px;
+    font-size: var(--step-1);
+  }
+  .stepper {
+    gap: var(--s-2);
+  }
+  .quiet-button,
+  .popover-trigger {
+    min-height: 38px;
+  }
+  .board-tab,
+  .mode-key {
+    min-height: 42px;
+    align-items: center;
+  }
+  .agenda-row,
+  .brief-row {
+    padding-top: var(--s-3);
+    padding-bottom: var(--s-3);
+  }
+  /* a 24px-tall field is a line of text, not something you can hit */
+  .ask-bar input,
+  .quick-add input,
+  .search-field input,
+  .subtask-add input,
+  .option-add input {
+    min-height: 34px;
+  }
+  .agenda-head,
+  .agenda-more {
+    min-height: 40px;
+  }
+  /* an auto-applied label sits inline with the chips it explains */
+  .chip-row {
+    align-items: center;
+    row-gap: var(--s-2);
+  }
+  /* iOS zooms the page in on any field under 16px, and never zooms back out */
+  input,
+  textarea,
+  select {
+    font-size: 16px;
+  }
+}
+
+/* --- 2. no traffic lights in a browser tab -------------------------- */
+/* The insets exist for the macOS window buttons on the hidden title bar.
+   Anywhere but the desktop app they are dead space, and on a phone they are
+   a fifth of the screen. */
+html:not([data-tauri]) .surface-head,
+html:not([data-tauri]) .surface-ask {
+  padding-left: 0;
+}
+html:not([data-tauri]) .depths-head {
+  padding-left: var(--s-6);
+}
+
+/* --- 3. the phone ---------------------------------------------------- */
+@media (max-width: 640px) {
+  :root {
+    /* the same rhythm at the scale of a hand: 84px of gutter is a fifth of
+       this screen on each side */
+    --s-5: 18px;
+    --s-6: 20px;
+    --s-7: 26px;
+    --step-4: 2.5rem;
+    /* the clock still leads, but the list has to clear the fold */
+    --step-5: clamp(3rem, 15vw, 4.5rem);
+  }
+
+  /* the browser's own chrome slides in and out; dvh moves with it, vh does
+     not, and the difference is the bottom of the app */
+  html,
+  body,
+  #root {
+    height: 100dvh;
+  }
+
+  /* --- the surface scrolls instead of compressing --- */
+  /* Every row was fighting for one screen: the clock overran the wordmark and
+     the agenda ran off the left edge. Rows take the height they need and the
+     page carries them. */
+  .surface {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'head'
+      'ask'
+      'clock'
+      'next'
+      'tide'
+      'foot'
+      'capture';
+    /* every row takes the height of what is in it. A definite height here is
+       what caused the pile-up: the rows were handed a share of one screen and
+       the agenda drew straight over the tide line and the stones. */
+    grid-template-rows: repeat(7, auto);
+    align-content: start;
+    height: auto;
+    min-height: 100%;
+    gap: var(--s-4);
+    padding: max(var(--s-4), env(safe-area-inset-top)) var(--s-5)
+      max(var(--s-5), env(safe-area-inset-bottom));
+  }
+  /* the page scrolls, not the panel inside it */
+  .app-content {
+    overflow-y: auto;
+    /* the veil bleeds past both edges on purpose; that bleed must not become
+       a sideways scroll */
+    overflow-x: hidden;
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+  /* one scroll, not two: a list that scrolls inside a page that scrolls is a
+     coin toss under a thumb */
+  .surface-next {
+    max-height: none;
+    /* bleeds to both edges of the screen, so the fade happens off the page */
+    margin: 0 calc(var(--s-5) * -1);
+    padding: var(--s-4) var(--s-5);
+  }
+  .agenda {
+    overflow: visible;
+    max-height: none;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  .surface-clock {
+    align-self: start;
+    padding-bottom: 0;
+  }
+  .surface-head {
+    align-items: center;
+  }
+  .wordmark {
+    font-size: var(--step-1);
+  }
+
+  /* the week and the stones, stacked, each with the whole width */
+  .surface-foot {
+    gap: var(--s-5);
+  }
+  .week-load {
+    width: 100%;
+    gap: var(--s-4);
+  }
+  .week-figures {
+    flex: none;
+    white-space: nowrap;
+  }
+  .week-days {
+    flex: 1;
+    min-width: 0;
+    justify-content: flex-end;
+  }
+  .stones {
+    width: 100%;
+    justify-content: space-between;
+    gap: var(--s-2);
+  }
+
+  /* --- rows of tabs that do not fit, scroll --- */
+  /* Ulangan · Tugas · semua, and pomodoro · hitung mundur · stopwatch, both
+     ran past the right edge with no way to reach what was out there. */
+  .board-tabs,
+  .mode-switch,
+  .load-days,
+  .filter-bar {
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    min-width: 0;
+  }
+  .board-tabs::-webkit-scrollbar,
+  .mode-switch::-webkit-scrollbar,
+  .load-days::-webkit-scrollbar,
+  .filter-bar::-webkit-scrollbar {
+    display: none;
+  }
+  .board-tabs {
+    flex: 1;
+  }
+  .board-tab,
+  .mode-key,
+  .load-day {
+    flex: none;
+    white-space: nowrap;
+  }
+  .depths-head {
+    padding-top: max(var(--s-3), env(safe-area-inset-top));
+    padding-right: var(--s-5);
+    padding-left: var(--s-5);
+    gap: var(--s-3);
+  }
+  html:not([data-tauri]) .depths-head {
+    padding-left: var(--s-5);
+  }
+  .head-row {
+    gap: var(--s-3);
+    min-width: 0;
+  }
+  /* the controls were four fragments wrapping over three lines. One row that
+     scrolls, and the label the value already says gets dropped. */
+  .head-row + .head-row {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .head-row + .head-row::-webkit-scrollbar {
+    display: none;
+  }
+  .filter-bar {
+    display: flex;
+    align-items: center;
+    gap: var(--s-3);
+    flex: none;
+  }
+  .popover-anchor,
+  .filter-bar > * {
+    flex: none;
+  }
+  .popover-trigger .gauge-label {
+    display: none;
+  }
+  .search-field {
+    flex: 0 0 118px;
+  }
+  .depths-scroll,
+  .brief-scroll,
+  .reminder-list,
+  .settings-scroll,
+  .timer-columns {
+    padding-left: var(--s-4);
+    padding-right: var(--s-4);
+    padding-bottom: max(var(--s-6), env(safe-area-inset-bottom));
+  }
+  /* the glows behind the clock and the stage are drawn wider than the thing
+     they light. On a phone that bleed was turning into a sideways scrollbar. */
+  .depths-scroll,
+  .brief-scroll,
+  .reminder-list,
+  .settings-scroll,
+  .timer-stage,
+  .timer-columns {
+    overflow-x: hidden;
+  }
+  .load-days {
+    gap: var(--s-2);
+  }
+  .depths-capture,
+  .surface-capture {
+    padding-bottom: max(var(--s-2), env(safe-area-inset-bottom));
+  }
+
+  /* --- the briefing --- */
+  /* Four columns squeezed the title to one letter per line. Two rows: what it
+     is and when, then how long and what it carries. */
+  /* Four columns squeezed the title to one word per line. Three rows: what it
+     is and when it falls, how far away it is, then what it carries. The chips
+     get their own line so they can never take the title's width. */
+  .brief-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'title date'
+      'when when'
+      'labels labels';
+    row-gap: var(--s-1);
+    align-items: baseline;
+  }
+  .brief-title {
+    grid-area: title;
+  }
+  .brief-date {
+    grid-area: date;
+  }
+  .brief-when {
+    grid-area: when;
+  }
+  .brief-labels {
+    grid-area: labels;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .load-figures {
+    gap: var(--s-4) var(--s-5);
+  }
+  .load-days {
+    padding-bottom: var(--s-2);
+  }
+
+  /* --- the timer --- */
+  /* four durations and two switches wrapped into whatever order fitted. One
+     per line, each reading label-left, value-right. */
+  .timer-settings,
+  .timer-presets {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s-3);
+  }
+  .timer-settings .stepper {
+    justify-content: space-between;
+    width: 100%;
+  }
+  .timer-settings > .quiet-button,
+  .timer-presets > .quiet-button {
+    justify-self: start;
+  }
+  .timer-foot {
+    flex-wrap: wrap;
+    gap: var(--s-2) var(--s-4);
+    padding-bottom: max(var(--s-4), env(safe-area-inset-bottom));
+  }
+
+  /* --- a drawer is a sheet when the screen is a phone --- */
+  /* 46vw of a 390px screen is 179px; nothing in a task fits in that. */
+  .drawer {
+    top: auto;
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-height: 88dvh;
+    padding: var(--s-4) var(--s-5) max(var(--s-5), env(safe-area-inset-bottom));
+    border-left: 0;
+    border-top: 1px solid var(--hairline);
+    border-radius: 14px 14px 0 0;
+    animation: sheet var(--t-mid) var(--ease-tide);
+  }
+  @keyframes sheet {
+    from {
+      transform: translateY(24px);
+      opacity: 0;
+    }
+  }
+
+  .palette-scrim {
+    padding-top: 8dvh;
+  }
+  .palette {
+    width: 94vw;
+  }
+  .palette.chat {
+    max-height: 76dvh;
+  }
+  .popover-panel {
+    max-width: calc(100vw - var(--s-5) * 2);
+  }
+  .filter-menu {
+    min-width: 0;
+    max-width: calc(100vw - var(--s-5) * 4);
+  }
+
+  /* --- the small print, one step up --- */
+  /* 9px reads on a 220ppi laptop at arm's length. It does not read on a phone
+     at the same distance. */
+  .chip {
+    font-size: 11px;
+  }
+  .board-count,
+  .load-name,
+  .week-name,
+  .task-day-bottom {
+    font-size: 10.5px;
+  }
+  .search-field input {
+    width: 100%;
+    min-width: 0;
+  }
+}
