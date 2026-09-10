@@ -1,0 +1,226 @@
+/* ── motion ─────────────────────────────────────────────────────────── */
+/* Everything in this app arrived with a rise and a fade and then vanished the
+   instant it was unmounted. This layer is the other half of each of those
+   transitions, plus the two things motion can say that a still frame cannot:
+   which way you just travelled, and what order things settled in. */
+
+/* --- 1. leaving -------------------------------------------------------- */
+/* Exits are quicker than entrances and use the sink curve rather than the
+   tide: arriving is the sea carrying something in, going is it letting go. */
+
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes drawer-out {
+  to {
+    opacity: 0;
+    transform: translateX(26px);
+  }
+}
+
+@keyframes sheet-out {
+  to {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+}
+
+@keyframes palette-out {
+  to {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.985);
+  }
+}
+
+@keyframes toast-out {
+  to {
+    opacity: 0;
+    transform: translate(-50%, 8px);
+  }
+}
+
+@keyframes panel-out {
+  to {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.97);
+  }
+}
+
+/* nothing on the way out answers a click */
+[data-leaving] {
+  pointer-events: none;
+}
+
+.drawer[data-leaving] {
+  animation: drawer-out var(--t-quick) var(--ease-sink) forwards;
+}
+.drawer-scrim[data-leaving],
+.palette-scrim[data-leaving],
+.confirm-catcher[data-leaving] {
+  animation: fade-out var(--t-quick) var(--ease-sink) forwards;
+}
+.palette-scrim[data-leaving] .palette {
+  animation: palette-out 200ms var(--ease-sink) forwards;
+}
+.toast[data-leaving] {
+  animation: toast-out 260ms var(--ease-sink) forwards;
+}
+.popover-panel[data-leaving] {
+  animation: panel-out 160ms var(--ease-sink) forwards;
+  transform-origin: top left;
+}
+/* two classes, deliberately: .popover-panel is defined later in the sheet and
+   would otherwise win the tie on source order */
+.popover-panel.confirm-panel[data-leaving] {
+  animation: panel-out 180ms var(--ease-sink) forwards;
+  transform-origin: center;
+}
+
+/* on a phone the drawer is a bottom sheet, so it leaves the way it came */
+@media (max-width: 640px) {
+  .drawer[data-leaving] {
+    animation: sheet-out var(--t-quick) var(--ease-sink) forwards;
+  }
+}
+
+/* --- 2. which way you travelled --------------------------------------- */
+/* Going down and coming up used to look identical. They are opposite moves in
+   a place made of depth, so they read as opposite moves. */
+
+@keyframes dive {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.988);
+  }
+}
+
+@keyframes surfacing {
+  from {
+    opacity: 0;
+    transform: translateY(-18px) scale(1.012);
+  }
+}
+
+.route {
+  animation: route-in 320ms var(--ease-tide) backwards;
+}
+.route[data-dir='down'] {
+  animation: dive 400ms var(--ease-tide) backwards;
+}
+.route[data-dir='up'] {
+  animation: surfacing 400ms var(--ease-tide) backwards;
+}
+
+/* --- 3. what order things settled in ---------------------------------- */
+/* A list that appears all at once reads as a screenshot. Twenty-six
+   milliseconds apart reads as water finding its level — capped at ten rows so
+   a long list never makes you wait for the bottom of it. */
+
+@keyframes settle {
+  from {
+    opacity: 0;
+    transform: translateY(7px);
+  }
+}
+
+.agenda li,
+.lane-slot,
+.brief-row {
+  /* backwards, never both: a filled animation would outrank the hover
+     transform these rows already have */
+  animation: settle 420ms var(--ease-tide) backwards;
+  animation-delay: calc(min(var(--i, 0), 10) * 26ms);
+}
+
+/* the depths arrive lane by lane, each one deeper than the last */
+.lane {
+  animation: settle 480ms var(--ease-tide) backwards;
+  animation-delay: calc(var(--lane-depth, 0) * 90ms);
+}
+
+/* --- 4. a hand is faster than a tide ---------------------------------- */
+/* 240ms each way made hover feel like the interface was thinking about it.
+   Fast to answer, slow to let go — the asymmetry is what reads as responsive
+   without reading as twitchy. */
+
+.task-row,
+.agenda-row,
+.brief-row,
+.chat-row,
+.menu-item,
+.quiet-button,
+.icon-button,
+.chip-button,
+.board-tab,
+.mode-key,
+.popover-trigger,
+.stone-face,
+.week-load,
+.swatch {
+  transition-duration: var(--t-out);
+}
+.task-row:hover,
+.agenda-row:hover,
+.brief-row:hover,
+.chat-row:hover,
+.menu-item:hover,
+.quiet-button:hover,
+.icon-button:hover,
+.chip-button:hover,
+.board-tab:hover,
+.mode-key:hover,
+.popover-trigger:hover,
+.stone:hover .stone-face,
+.week-load:hover,
+.swatch:hover {
+  transition-duration: var(--t-in);
+}
+
+/* a press answers now and settles back slowly */
+button,
+.chip-button {
+  transition-property: background, color, border-color, opacity, transform, box-shadow;
+}
+button:active:not(:disabled),
+.chip-button:active {
+  transition-duration: 90ms;
+}
+
+/* the focus ring closes in rather than appearing at its final distance */
+:focus-visible {
+  transition:
+    outline-color var(--t-in) var(--ease-touch),
+    outline-offset var(--t-in) var(--ease-touch);
+}
+
+/* --- 5. reduced motion ------------------------------------------------- */
+/* One place, so it stays complete. The durations in tokens.css already fall to
+   1ms; these are the keyframes, which carry their own. */
+
+@media (prefers-reduced-motion: reduce) {
+  .route,
+  .route[data-dir='down'],
+  .route[data-dir='up'],
+  .agenda li,
+  .lane,
+  .lane-slot,
+  .brief-row,
+  .drawer,
+  .drawer[data-leaving],
+  .drawer-scrim[data-leaving],
+  .palette-scrim[data-leaving],
+  .palette-scrim[data-leaving] .palette,
+  .confirm-catcher[data-leaving],
+  .toast[data-leaving],
+  .popover-panel[data-leaving],
+  .popover-panel.confirm-panel[data-leaving] {
+    animation: none;
+  }
+  /* still gone, just not gradually */
+  [data-leaving] {
+    opacity: 0;
+  }
+}

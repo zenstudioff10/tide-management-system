@@ -5,6 +5,7 @@ import { Chip } from './Chip'
 import { IconClose, IconPlus } from '../design/icons'
 import { id } from '../lib/id'
 import { OPTION_COLORS } from '../ocean/palette'
+import { useExit, useLast } from '../lib/useExit'
 
 const toDateInput = (t?: number) => (t ? new Date(t).toISOString().slice(0, 10) : '')
 const toTimeInput = (t?: number) => {
@@ -17,7 +18,10 @@ export function TaskDrawer() {
   const taskId = useUi((s) => s.openTaskId)
   const close = () => useUi.getState().openTask(null)
 
-  const task = useApp((s) => s.tasks.find((t) => t.id === taskId))
+  const live = useApp((s) => s.tasks.find((t) => t.id === taskId))
+  // it keeps drawing the task it had while it slides away
+  const { render, leaving } = useExit(!!live, 240)
+  const task = useLast(live)
   const dimensions = useApp((s) => s.dimensions)
   const options = useApp((s) => s.options)
   const { updateTask, deleteTask, toggleOption } = useApp.getState()
@@ -37,7 +41,7 @@ export function TaskDrawer() {
     return () => window.removeEventListener('keydown', onKey)
   }, [taskId])
 
-  if (!task) return null
+  if (!render || !task) return null
 
   const setDatePart = (datePart: string, timePart: string) => {
     if (!datePart && !timePart) return updateTask(task.id, { dueAt: undefined })
@@ -48,8 +52,8 @@ export function TaskDrawer() {
 
   return (
     <>
-      <div className="drawer-scrim" onClick={close} />
-      <aside className="drawer">
+      <div className="drawer-scrim" data-leaving={leaving ? '' : undefined} onClick={close} />
+      <aside className="drawer" data-leaving={leaving ? '' : undefined}>
         <div className="drawer-head">
           <span className="gauge-label">task</span>
           <button className="icon-button" onClick={close} aria-label="Close">

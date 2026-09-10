@@ -6,6 +6,7 @@ import { IconClose, IconPlus } from '../design/icons'
 import { quickParse } from '../lib/quickparse'
 import { addDays, fmtDayLong, startOfDay } from '../lib/time'
 import { OPTION_COLORS } from '../ocean/palette'
+import { useExit } from '../lib/useExit'
 
 const pad = (n: number) => String(n).padStart(2, '0')
 const toDateInput = (t: number) => {
@@ -73,7 +74,8 @@ export function TaskCompose() {
     return new Date(`${date}T${time || '09:00'}`).getTime()
   }, [date, time])
 
-  if (seed === null) return null
+  const { render, leaving } = useExit(seed !== null, 240)
+  if (!render) return null
 
   const toggle = (optionId: string) => {
     const option = options.find((o) => o.id === optionId)
@@ -120,8 +122,12 @@ export function TaskCompose() {
 
   return (
     <>
-      <div className="drawer-scrim" onClick={() => useUi.getState().endCompose()} />
-      <aside className="drawer compose">
+      <div
+        className="drawer-scrim"
+        data-leaving={leaving ? '' : undefined}
+        onClick={() => useUi.getState().endCompose()}
+      />
+      <aside className="drawer compose" data-leaving={leaving ? '' : undefined}>
         <div className="drawer-head">
           <span className="gauge-label">tugas baru</span>
           <button className="icon-button" onClick={() => useUi.getState().endCompose()} aria-label="Close">

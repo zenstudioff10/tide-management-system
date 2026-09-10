@@ -99,8 +99,11 @@
   animation: rise-in 700ms var(--ease-tide) 2.15s both;
 }
 
-/* skipped, or reduced motion: everything is simply already here */
-[data-intro='done'] *,
-[data-intro='done'] *::before {
-  animation: none !important;
-}
+/* Skipped, or finished: every rule above is scoped to [data-intro='running'],
+   so the moment the attribute flips they stop matching and everything is
+   simply already here. This used to be enforced with
+
+     [data-intro='done'] *, [data-intro='done'] *::before { animation: none !important }
+
+   which also cancelled every animation the app itself owns — route changes,
+   list stagger, the lanes — for the entire life of the session. */

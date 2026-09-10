@@ -3,6 +3,7 @@ import { useApp } from '../store/useApp'
 import { useUi } from '../store/useUi'
 import { IconCheck, IconClose } from '../design/icons'
 import { bloom } from '../lib/chime'
+import { useExit, useLast } from '../lib/useExit'
 
 /** How long the row takes to rise and dissolve before it actually completes. */
 export const CLEAR_MS = 850
@@ -44,7 +45,10 @@ export function completeTask(taskId: string) {
  *  fills while you hold it and lets go on its own. Deleting wears the same
  *  gesture in coral, so one habit covers both and the colour carries the risk. */
 export function ConfirmHold() {
-  const confirm = useUi((s) => s.confirm)
+  const live = useUi((s) => s.confirm)
+  const { render, leaving } = useExit(!!live, 180)
+  // it needs its title and its corner to close around
+  const confirm = useLast(live)
   const [holding, setHolding] = useState(false)
   const timer = useRef<number | undefined>(undefined)
   const button = useRef<HTMLButtonElement>(null)
@@ -57,7 +61,7 @@ export function ConfirmHold() {
   useEffect(() => () => window.clearTimeout(timer.current), [])
 
   useEffect(() => {
-    if (!confirm) return
+    if (!live) return
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         e.preventDefault()
@@ -67,9 +71,9 @@ export function ConfirmHold() {
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [confirm])
+  }, [live])
 
-  if (!confirm) return null
+  if (!render || !confirm) return null
 
   const deleting = confirm.kind === 'delete'
 
@@ -95,12 +99,18 @@ export function ConfirmHold() {
     <>
       <div
         className="confirm-catcher"
+        data-leaving={leaving ? '' : undefined}
         onMouseDown={() => {
           stopHold()
           useUi.getState().cancelConfirm()
         }}
       />
-      <div className="popover-panel confirm-panel" data-kind={confirm.kind} style={{ left, top }}>
+      <div
+        className="popover-panel confirm-panel"
+        data-kind={confirm.kind}
+        data-leaving={leaving ? '' : undefined}
+        style={{ left, top }}
+      >
         <span className="gauge-label">{deleting ? 'hapus ini?' : 'tandai selesai?'}</span>
         <p className="confirm-title">{confirm.title}</p>
         {confirm.note && <p className="gauge-label confirm-note">{confirm.note}</p>}

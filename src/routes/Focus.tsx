@@ -11,7 +11,7 @@ import { daysUntil, fmtCountdown, fmtDayCell, fmtDayLong } from '../lib/time'
 import { useEffect } from 'react'
 import type { Task } from '../types'
 
-function Line({ task, now }: { task: Task; now: number }) {
+function Line({ task, now, row }: { task: Task; now: number; row: number }) {
   const options = useApp((s) => s.options)
   const dimensions = useApp((s) => s.dimensions)
 
@@ -27,7 +27,11 @@ function Line({ task, now }: { task: Task; now: number }) {
   const late = away !== null && away < 0
 
   return (
-    <button className="brief-row" onClick={() => useUi.getState().openTask(task.id)}>
+    <button
+      className="brief-row"
+      style={{ ['--i' as string]: row }}
+      onClick={() => useUi.getState().openTask(task.id)}
+    >
       <span className="brief-when mono" data-late={late ? '' : undefined} data-soon={away !== null && away <= 1 ? '' : undefined}>
         {task.dueAt ? fmtCountdown(task.dueAt, now) : 'tanpa tanggal'}
       </span>
@@ -144,7 +148,7 @@ export function Focus() {
           <section className="brief-block">
             <h2 className="heading">Terdekat</h2>
             {soon.length ? (
-              soon.map((t) => <Line key={t.id} task={t} now={now} />)
+              soon.map((t, i) => <Line key={t.id} task={t} now={now} row={i} />)
             ) : (
               <p className="lane-empty gauge-label">tidak ada yang jatuh tempo</p>
             )}
@@ -159,7 +163,7 @@ export function Focus() {
               ) : null}
             </h2>
             {important.length ? (
-              important.map((t) => <Line key={t.id} task={t} now={now} />)
+              important.map((t, i) => <Line key={t.id} task={t} now={now} row={i} />)
             ) : (
               <p className="lane-empty gauge-label">
                 {importantNames.length

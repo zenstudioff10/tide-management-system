@@ -160,10 +160,11 @@ export function Depths() {
             </div>
 
             <div className="lane-body">
-              {lane.tasks.map((task) => (
+              {lane.tasks.map((task, row) => (
                 <div
                   key={task.id}
                   className="lane-slot"
+                  style={{ ['--i' as string]: row }}
                   data-drop={
                     dropAt?.lane === lane.key && dropAt.beforeId === task.id ? '' : undefined
                   }

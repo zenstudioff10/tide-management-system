@@ -69,6 +69,9 @@
   /* --- motion: slow in, slower out --- */
   --ease-tide: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-sink: cubic-bezier(0.4, 0, 0.2, 1);
+  /* a hand is faster than a tide: quick to answer, slower to let go */
+  --t-in: 130ms;
+  --t-out: 260ms;
   /* touch answers fast; the sea keeps its own time */
   --t-touch: 140ms;
   --ease-touch: cubic-bezier(0.2, 0, 0.1, 1);
@@ -88,6 +91,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   :root {
+    --t-in: 1ms;
+    --t-out: 1ms;
     --t-touch: 1ms;
     --t-quick: 1ms;
     --t-mid: 1ms;

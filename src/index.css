@@ -10,6 +10,7 @@
 @import './design/components.css';
 @import './design/routes.css';
 @import './design/intro.css';
+@import './design/motion.css';
 @import './design/mobile.css';
 
 * {

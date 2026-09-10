@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { listen } from '@tauri-apps/api/event'
 import { isTauri } from '@tauri-apps/api/core'
 import { useApp } from './store/useApp'
@@ -29,6 +29,17 @@ import { chime, wakeAudio } from './lib/chime'
 import { installUiSounds } from './lib/uisound'
 import { ensureNotifyPermission, notify } from './lib/notify'
 import type { Route } from './types'
+
+/** How deep each place sits, so a route change can travel rather than blink.
+ *  The water already dives when you go down; the type should agree with it. */
+const DEPTH: Record<Route, number> = {
+  surface: 0,
+  focus: 1,
+  timer: 1,
+  reminders: 1,
+  settings: 1,
+  depths: 2,
+}
 
 const ROUTES: Record<Route, () => React.ReactElement> = {
   surface: Surface,
@@ -281,6 +292,12 @@ export default function App() {
   }, [chord])
 
   const View = ROUTES[route]
+  const came = useRef<Route>(route)
+  const dir =
+    DEPTH[route] > DEPTH[came.current] ? 'down' : DEPTH[route] < DEPTH[came.current] ? 'up' : 'across'
+  useEffect(() => {
+    came.current = route
+  }, [route])
 
   return (
     <div className="app" data-route={route}>
@@ -290,7 +307,7 @@ export default function App() {
         data-ready={ready ? '' : undefined}
         data-intro={introDone ? 'done' : 'running'}
       >
-        <div className="route" key={route}>
+        <div className="route" key={route} data-dir={dir}>
           <View />
         </div>
       </main>

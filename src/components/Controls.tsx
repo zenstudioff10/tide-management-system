@@ -4,6 +4,7 @@ import { useUi } from '../store/useUi'
 import { Chip } from './Chip'
 import { IconChevron, IconSearch } from '../design/icons'
 import { DATE_GROUP } from '../store/selectors'
+import { useExit } from '../lib/useExit'
 
 /** Small anchored panel. Closes on outside click or Escape. */
 export function Popover({
@@ -34,14 +35,20 @@ export function Popover({
     }
   }, [open])
 
+  const panel = useExit(open, 160)
+
   return (
     <div className="popover-anchor" ref={ref}>
       <button className="popover-trigger" data-open={open ? '' : undefined} onClick={() => setOpen((v) => !v)}>
         {label}
         <IconChevron size={14} className="popover-caret" />
       </button>
-      {open && (
-        <div className="popover-panel" data-align={align}>
+      {panel.render && (
+        <div
+          className="popover-panel"
+          data-align={align}
+          data-leaving={panel.leaving ? '' : undefined}
+        >
           {children(() => setOpen(false))}
         </div>
       )}
