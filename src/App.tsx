@@ -20,6 +20,9 @@ import { CommandPalette } from './components/CommandPalette'
 import { dueReminders } from './store/selectors'
 import { INTRO_MS, introDepth, useIntro } from './intro/useIntro'
 import { dismissBoot } from './lib/boot'
+import { flushPending, watchSaves } from './lib/persist'
+import { getCurrentWindow } from '@tauri-apps/api/window'
+import { invoke } from '@tauri-apps/api/core'
 import { useOcean } from './ocean/useOcean'
 import { quickParse } from './lib/quickparse'
 import { chime, wakeAudio } from './lib/chime'
@@ -107,6 +110,45 @@ export default function App() {
       window.removeEventListener('keydown', skip)
     }
   }, [booted])
+
+  // every path out of the app writes first: hiding, blurring, closing, quitting
+  useEffect(() => {
+    const onHidden = () => {
+      if (document.visibilityState === 'hidden') void flushPending()
+    }
+    document.addEventListener('visibilitychange', onHidden)
+
+    let stopFocus: (() => void) | undefined
+    let stopFlush: (() => void) | undefined
+    if (isTauri()) {
+      void getCurrentWindow()
+        .onFocusChanged(({ payload: focused }) => {
+          if (!focused) void flushPending()
+        })
+        .then((off) => (stopFocus = off))
+
+      // Rust holds the exit open until this lands
+      void listen('tide://flush', async () => {
+        await flushPending()
+        await invoke('confirm_exit')
+      }).then((off) => (stopFlush = off))
+    }
+
+    return () => {
+      document.removeEventListener('visibilitychange', onHidden)
+      stopFocus?.()
+      stopFlush?.()
+    }
+  }, [])
+
+  // a write that fails must never fail quietly
+  useEffect(
+    () =>
+      watchSaves(({ error }) => {
+        if (error) useUi.getState().showToast('save-error', `Gagal menyimpan — ${error}`)
+      }),
+    [],
+  )
 
   // deep links: changing the hash navigates, not just on first load
   useEffect(() => {

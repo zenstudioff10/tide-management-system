@@ -22,31 +22,81 @@ export async function loadData(): Promise<AppData | null> {
 let timer: number | undefined
 let pending: AppData | null = null
 
-async function flush() {
+/** Told about every write, so the interface can show the truth rather than
+ *  assume it. */
+type Watcher = (state: { savedAt: number | null; error: string | null }) => void
+const watchers = new Set<Watcher>()
+let savedAt: number | null = null
+let error: string | null = null
+
+export function watchSaves(fn: Watcher): () => void {
+  watchers.add(fn)
+  fn({ savedAt, error })
+  return () => watchers.delete(fn)
+}
+
+const announce = () => watchers.forEach((fn) => fn({ savedAt, error }))
+
+async function flush(): Promise<void> {
   if (!pending) return
   const data = pending
   pending = null
   const json = JSON.stringify(data, null, 2)
   try {
-    if (isTauri()) await invoke('save_data', { json })
-    else localStorage.setItem(LS_KEY, json)
+    if (isTauri()) {
+      await invoke('save_data', { json })
+    } else {
+      // keep the previous version alongside: a half-written localStorage entry
+      // should never be the only copy
+      const previous = localStorage.getItem(LS_KEY)
+      if (previous) localStorage.setItem(`${LS_KEY}.prev`, previous)
+      localStorage.setItem(LS_KEY, json)
+    }
+    savedAt = Date.now()
+    error = null
   } catch (err) {
+    // put it back so the next flush retries rather than dropping the edit
+    pending = data
+    error = String(err)
     console.error('could not write tide.json', err)
   }
+  announce()
 }
 
 /** Coalesces bursts of edits into one atomic write. */
 export function saveData(data: AppData) {
   pending = data
   if (timer) window.clearTimeout(timer)
-  timer = window.setTimeout(flush, 1500)
+  timer = window.setTimeout(flush, 800)
 }
 
-/** Called on window close so the last keystroke is never lost. */
+/** Called on every path out — hiding, blurring, closing, quitting — so the last
+ *  keystroke is never the one that gets lost. */
 export function saveNow(data: AppData) {
   pending = data
   if (timer) window.clearTimeout(timer)
   return flush()
+}
+
+/** Writes whatever is still pending, if anything is. */
+export function flushPending(): Promise<void> {
+  if (timer) window.clearTimeout(timer)
+  return flush()
+}
+
+export async function saveStatus(): Promise<{
+  path: string
+  saved_at: number | null
+  backups: number
+  mirror: string
+  mirror_written: boolean
+} | null> {
+  if (!isTauri()) return null
+  try {
+    return await invoke('save_status')
+  } catch {
+    return null
+  }
 }
 
 export async function dataPath(): Promise<string> {

@@ -6,9 +6,11 @@ use tauri::{AppHandle, Manager};
 
 const FILE: &str = "tide.json";
 const BACKUP_DIR: &str = "backups";
-const KEEP_BACKUPS: usize = 10;
+const KEEP_BACKUPS: usize = 20;
 /// a fresh backup at most this often, so a busy afternoon does not bury the folder
 const BACKUP_EVERY_SECS: u64 = 900;
+/// a copy somewhere the user actually looks, written once a day
+const MIRROR_DIR: &str = "Tide";
 
 fn dir(app: &AppHandle) -> Result<PathBuf, String> {
     let path = app.path().app_data_dir().map_err(|e| e.to_string())?;
@@ -43,7 +45,60 @@ pub fn save_data(app: AppHandle, json: String) -> Result<(), String> {
     let tmp = path.with_extension("json.tmp");
     fs::write(&tmp, json.as_bytes()).map_err(|e| e.to_string())?;
     fs::rename(&tmp, &path).map_err(|e| e.to_string())?;
+
+    // a copy in Documents, once a day: the app's own folder is not somewhere
+    // anyone thinks to look, and this one rides along with iCloud
+    let _ = mirror_daily(&app, &json);
     Ok(())
+}
+
+/// Where today's visible copy lives, whether or not it has been written yet.
+fn mirror_path(app: &AppHandle) -> Result<PathBuf, String> {
+    let documents = app.path().document_dir().map_err(|e| e.to_string())?;
+    let folder = documents.join(MIRROR_DIR);
+    let stamp = Local::now().format("%Y-%m-%d").to_string();
+    Ok(folder.join(format!("tide-{stamp}.json")))
+}
+
+fn mirror_daily(app: &AppHandle, json: &str) -> Result<(), String> {
+    let target = mirror_path(app)?;
+    if target.exists() {
+        return Ok(()); // today's copy is already there
+    }
+    if let Some(parent) = target.parent() {
+        fs::create_dir_all(parent).map_err(|e| e.to_string())?;
+    }
+    fs::write(&target, json.as_bytes()).map_err(|e| e.to_string())?;
+    Ok(())
+}
+
+/// What the interface shows in Settings, so "saved" is a fact rather than faith.
+#[derive(serde::Serialize)]
+pub struct SaveStatus {
+    path: String,
+    saved_at: Option<u64>,
+    backups: usize,
+    mirror: String,
+    mirror_written: bool,
+}
+
+#[tauri::command]
+pub fn save_status(app: AppHandle) -> Result<SaveStatus, String> {
+    let path = file(&app)?;
+    let saved_at = fs::metadata(&path)
+        .and_then(|m| m.modified())
+        .ok()
+        .and_then(|t| t.duration_since(std::time::UNIX_EPOCH).ok())
+        .map(|d| d.as_secs());
+    let mirror = mirror_path(&app)?;
+
+    Ok(SaveStatus {
+        path: path.to_string_lossy().to_string(),
+        saved_at,
+        backups: list_backups(&app).map(|b| b.len()).unwrap_or(0),
+        mirror: mirror.to_string_lossy().to_string(),
+        mirror_written: mirror.exists(),
+    })
 }
 
 #[tauri::command]
@@ -100,13 +155,25 @@ fn rotate_backups(app: &AppHandle, current: &PathBuf) -> Result<(), String> {
         return Ok(());
     }
 
-    let recent_enough = list_backups(app)?
-        .last()
-        .and_then(|p| fs::metadata(p).ok())
-        .and_then(|m| m.modified().ok())
-        .and_then(|t| t.elapsed().ok())
-        .map(|age| age.as_secs() < BACKUP_EVERY_SECS)
+    let newest = list_backups(app)?.last().cloned();
+
+    // one backup per quarter hour is plenty — except that every day must have
+    // at least one of its own, however quiet that day was
+    let today = Local::now().format("%Y%m%d").to_string();
+    let newest_is_today = newest
+        .as_ref()
+        .and_then(|p| p.file_name().map(|n| n.to_string_lossy().to_string()))
+        .map(|name| name.contains(&today))
         .unwrap_or(false);
+
+    let recent_enough = newest_is_today
+        && newest
+            .as_ref()
+            .and_then(|p| fs::metadata(p).ok())
+            .and_then(|m| m.modified().ok())
+            .and_then(|t| t.elapsed().ok())
+            .map(|age| age.as_secs() < BACKUP_EVERY_SECS)
+            .unwrap_or(false);
     if recent_enough {
         return Ok(());
     }

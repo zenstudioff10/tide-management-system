@@ -5,8 +5,9 @@ import { useApp } from '../store/useApp'
 import { useUi } from '../store/useUi'
 import { OPTION_COLORS } from '../ocean/palette'
 import { chime } from '../lib/chime'
-import { dataPath, exportTo, importFrom } from '../lib/persist'
+import { dataPath, exportTo, importFrom, saveStatus, watchSaves } from '../lib/persist'
 import { IconClose, IconPlus, IconSurface } from '../design/icons'
+import { fmtRelative } from '../lib/time'
 import { Chip } from '../components/Chip'
 
 function Toggle({ on, label, onClick }: { on: boolean; label: string; onClick: () => void }) {
@@ -352,12 +353,23 @@ export function Settings() {
   const settings = useApp((s) => s.settings)
   const setSettings = useApp((s) => s.setSettings)
   const [path, setPath] = useState('')
+  const [saveInfo, setSaveInfo] = useState<Awaited<ReturnType<typeof saveStatus>>>(null)
+  const [saved, setSaved] = useState<{ savedAt: number | null; error: string | null }>({
+    savedAt: null,
+    error: null,
+  })
   const [capturing, setCapturing] = useState(false)
   const [status, setStatus] = useState('')
 
   useEffect(() => {
     void dataPath().then(setPath)
+    const refresh = () => void saveStatus().then(setSaveInfo)
+    refresh()
+    const iv = window.setInterval(refresh, 20_000)
+    return () => window.clearInterval(iv)
   }, [])
+
+  useEffect(() => watchSaves(setSaved), [])
 
   // record a real key combination rather than asking anyone to type "Control+Alt+Space"
   useEffect(() => {
@@ -510,10 +522,32 @@ export function Settings() {
         <section className="settings-block">
           <h2 className="heading">Datamu</h2>
           <p className="settings-note mono settings-path">{path}</p>
-          <p className="settings-note">
-            Written atomically after every change, with the last ten versions kept beside it in
-            <span className="mono"> backups/</span>.
+
+          <p className="settings-note" data-warn={saved.error ? '' : undefined}>
+            {saved.error ? (
+              <>Penyimpanan terakhir gagal: {saved.error}</>
+            ) : saved.savedAt ? (
+              <>Tersimpan {fmtRelative(saved.savedAt)}.</>
+            ) : saveInfo?.saved_at ? (
+              <>Tersimpan {fmtRelative(saveInfo.saved_at * 1000)}.</>
+            ) : (
+              <>Belum ada perubahan sejak dibuka.</>
+            )}
           </p>
+
+          <p className="settings-note">
+            Ditulis lewat berkas sementara lalu diganti namanya, jadi penulisan yang terputus tidak
+            bisa merusak berkasnya. {saveInfo ? `${saveInfo.backups} cadangan` : 'Cadangan'} tersimpan di
+            <span className="mono"> backups/</span>, satu tiap seperempat jam dan sekurangnya satu
+            setiap hari.
+          </p>
+
+          {saveInfo && (
+            <p className="settings-note">
+              Salinan harian{saveInfo.mirror_written ? ' hari ini sudah ditulis' : ' akan ditulis'} ke
+              <span className="mono settings-path"> {saveInfo.mirror}</span>
+            </p>
+          )}
           <div className="field-row">
             <button className="quiet-button" onClick={doExport} disabled={!isTauri()}>
               export

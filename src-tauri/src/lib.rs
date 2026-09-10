@@ -2,8 +2,21 @@ mod shortcut;
 mod storage;
 mod tray;
 
-use tauri::WindowEvent;
+use std::sync::atomic::{AtomicBool, Ordering};
+
+use tauri::{Emitter, RunEvent, WindowEvent};
 use tauri_plugin_global_shortcut::ShortcutState;
+
+/// Set once the interface has confirmed its last write, so quitting can be
+/// held open exactly once while that happens.
+static FLUSHED: AtomicBool = AtomicBool::new(false);
+
+/// Called by the interface when its pending save is on disk.
+#[tauri::command]
+fn confirm_exit(app: tauri::AppHandle) {
+    FLUSHED.store(true, Ordering::SeqCst);
+    app.exit(0);
+}
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -25,7 +38,9 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             storage::load_data,
             storage::save_data,
+            storage::save_status,
             storage::data_path,
+            confirm_exit,
             storage::export_data,
             storage::import_data,
             tray::update_tray,
@@ -62,6 +77,26 @@ pub fn run() {
                 }
             }
         })
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+        .build(tauri::generate_context!())
+        .expect("error while building tauri application")
+        .run(|app, event| {
+            // Quit used to kill the process mid-debounce, taking the last edit
+            // with it. Hold the exit once, ask the interface to flush, and let
+            // confirm_exit finish the job — with a deadline so a wedged webview
+            // can never trap the app open.
+            if let RunEvent::ExitRequested { api, .. } = &event {
+                if !FLUSHED.load(Ordering::SeqCst) {
+                    api.prevent_exit();
+                    let _ = app.emit("tide://flush", ());
+
+                    let handle = app.clone();
+                    std::thread::spawn(move || {
+                        std::thread::sleep(std::time::Duration::from_millis(1200));
+                        if !FLUSHED.swap(true, Ordering::SeqCst) {
+                            handle.exit(0);
+                        }
+                    });
+                }
+            }
+        });
 }

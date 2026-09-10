@@ -142,9 +142,26 @@ One file, readable, yours:
 ~/Library/Application Support/com.tide.app/backups/tide-YYYYMMDD-HHmm.json
 ```
 
-Writes are debounced, then performed in Rust as a temp file plus a rename, so an
-interrupted write cannot corrupt the file. The last ten versions are kept beside
-it. Export and import are in Settings. Nothing is sent anywhere; the app makes no
+Writes are debounced by 800ms, then performed in Rust as a temp file plus a
+rename, so an interrupted write cannot corrupt the file.
+
+Losing an edit takes more than one accident:
+
+- **Every way out writes first.** Hiding the window, losing focus, closing the
+  tab — and Quit, which Rust holds open until the interface confirms its last
+  write is on disk, with a 1.2s deadline so a wedged webview can never trap the
+  app open.
+- **Backups** in `backups/`: one per quarter hour of activity, and at least one
+  every day however quiet that day was. The last twenty are kept.
+- **A daily copy in Documents.** `~/Documents/Tide/tide-YYYY-MM-DD.json`, written
+  once a day — somewhere you actually look, and somewhere iCloud will carry it.
+- **A failed write is never silent.** It says so on screen, keeps the edit
+  pending, and retries on the next change rather than dropping it.
+- **In the browser** the previous version is kept alongside the current one, so a
+  half-written entry is never the only copy.
+
+Settings shows when it last saved, how many backups exist, and where today's copy
+went. Export and import are there too. Nothing is sent anywhere; the app makes no
 network requests.
 
 ## Notes on the build

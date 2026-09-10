@@ -21,17 +21,24 @@ export function Toast() {
     <div className="toast" role="status">
       <span className="toast-mark" aria-hidden />
       <span className="toast-text">
-        <span className="gauge-label">selesai</span> {toast.title}
+        {toast.taskId !== 'save-error' && <span className="gauge-label">selesai</span>}{' '}
+        {toast.title}
       </span>
-      <button
-        className="quiet-button"
-        onClick={() => {
-          useApp.getState().toggleDone(toast.taskId)
-          useUi.getState().hideToast()
-        }}
-      >
-        urungkan
-      </button>
+      {toast.taskId === 'save-error' ? (
+        <button className="quiet-button" onClick={() => useUi.getState().hideToast()}>
+          tutup
+        </button>
+      ) : (
+        <button
+          className="quiet-button"
+          onClick={() => {
+            useApp.getState().toggleDone(toast.taskId)
+            useUi.getState().hideToast()
+          }}
+        >
+          urungkan
+        </button>
+      )}
     </div>
   )
 }

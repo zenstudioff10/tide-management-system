@@ -1008,6 +1008,9 @@
   max-width: 62ch;
   color: var(--ink-3);
 }
+.settings-note[data-warn] {
+  color: var(--coral);
+}
 .settings-path {
   font-size: var(--step--1);
   color: var(--ink-4);
