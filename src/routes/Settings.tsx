@@ -59,6 +59,76 @@ function Boards() {
   )
 }
 
+/** The automatic week label: which option it is, and which lists follow it. */
+function AutoWeek() {
+  const boards = useApp((s) => s.boards)
+  const options = useApp((s) => s.options)
+  const settings = useApp((s) => s.settings)
+  const setSettings = useApp((s) => s.setSettings)
+
+  const option = options.find((o) => o.id === settings.autoWeekOptionId)
+  const following = settings.autoWeekBoardIds ?? []
+
+  const toggle = (boardId: string) =>
+    setSettings({
+      autoWeekBoardIds: following.includes(boardId)
+        ? following.filter((x) => x !== boardId)
+        : [...following, boardId],
+    })
+
+  return (
+    <section className="settings-block">
+      <h2 className="heading">Label otomatis</h2>
+      <p className="settings-note">
+        {option ? (
+          <>
+            Label <strong>{option.name}</strong> dipasang sendiri untuk apa pun yang jatuh tempo
+            Senin sampai Jumat minggu berjalan, dan lepas sendiri saat minggunya berganti. Kamu
+            tidak perlu — dan tidak bisa — mengaturnya manual.
+          </>
+        ) : (
+          <>Belum ada label yang diatur otomatis.</>
+        )}
+      </p>
+
+      <div className="drawer-fields">
+        <span className="gauge-label important-dim">berlaku untuk</span>
+        {[...boards]
+          .sort((a, b) => a.order - b.order)
+          .map((b) => (
+            <button
+              key={b.id}
+              className="chip chip-button"
+              data-active={following.includes(b.id) ? '' : undefined}
+              onClick={() => toggle(b.id)}
+            >
+              <span
+                className="chip-dot"
+                style={{ background: following.includes(b.id) ? 'var(--tod-light)' : 'var(--ink-4)' }}
+              />
+              {b.name}
+            </button>
+          ))}
+      </div>
+
+      <div className="drawer-fields">
+        <span className="gauge-label important-dim">labelnya</span>
+        {options
+          .filter((o) => o.dimensionId === option?.dimensionId)
+          .sort((a, b) => a.order - b.order)
+          .map((o) => (
+            <Chip
+              key={o.id}
+              option={o}
+              active={o.id === settings.autoWeekOptionId}
+              onClick={() => setSettings({ autoWeekOptionId: o.id })}
+            />
+          ))}
+      </div>
+    </section>
+  )
+}
+
 /** Which labels make a task worth surfacing early. Just ids into the same
  *  option table everything else uses — no special "priority" concept. */
 function ImportantLabels() {
@@ -316,6 +386,8 @@ export function Settings() {
         <Boards />
 
         <Groupings />
+
+        <AutoWeek />
 
         <ImportantLabels />
 

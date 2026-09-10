@@ -125,7 +125,12 @@ export default function App() {
     }
     check()
     const iv = window.setInterval(check, 5000)
-    return () => window.clearInterval(iv)
+    // the week label has to survive midnight without an edit to trigger it
+    const weekly = window.setInterval(() => useApp.getState().syncAutoWeek(), 60_000)
+    return () => {
+      window.clearInterval(iv)
+      window.clearInterval(weekly)
+    }
   }, [])
 
   // text captured by the hotkey bar arrives as an event: one window owns writes

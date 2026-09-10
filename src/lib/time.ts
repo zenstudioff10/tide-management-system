@@ -130,6 +130,15 @@ export function fmtCountdown(t: number, now = Date.now()): string {
   return `lewat ${Math.abs(d)} hari`
 }
 
+/** Monday 00:00 to Friday 23:59 of the week `now` falls in — the whole week,
+ *  including the days of it that have already passed. */
+export function thisWeekMonFri(now = Date.now()): { from: number; to: number } {
+  const today = startOfDay(now)
+  const shift = (new Date(today).getDay() + 6) % 7 // Monday = 0
+  const monday = addDays(today, -shift)
+  return { from: monday, to: startOfDay(addDays(monday, 4)) + 86_399_999 }
+}
+
 export const minutesBetween = (a: number, b: number): number => Math.round(Math.abs(b - a) / MIN)
 
 /** Next occurrence of a repeating thing, strictly after `from`. */

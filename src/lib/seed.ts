@@ -65,22 +65,22 @@ export function seedData(): AppData {
   })
 
   const tasks: Task[] = [
-    task('UH Fisika Gravitasi', 10, [HARD.id, logika.id, mingguIni.id]),
+    task('UH Fisika Gravitasi', 10, [HARD.id, logika.id]),
     task('UH Biologi Sel dan Histologi', 15, [HARD.id, hafalan.id, attention.id]),
     task('UH Biologi Struktur Sel', 17, [HARD.id, hafalan.id, attention.id]),
     task('UH Proposal Penelitian', 17, [logika.id, belajarH1.id]),
     task('UH Fisika Elastisitas dan Gerak Harmonik', 14, [HARD.id, logika.id, attention.id]),
-    task('Quiz Biologi Sel', 10, [HARD.id, hafalan.id, attention.id, mingguIni.id]),
+    task('Quiz Biologi Sel', 10, [HARD.id, hafalan.id, attention.id]),
     task('Quiz Matematika Lanjut — lingkaran', 14, [HARD.id, logika.id, attention.id]),
     task('UH Matematika Lanjut — lingkaran', 17, [HARD.id, logika.id, attention.id]),
-    task('Quiz Matematika Wajib — peluang', 9, [HARD.id, logika.id, attention.id, mingguIni.id]),
+    task('Quiz Matematika Wajib — peluang', 9, [HARD.id, logika.id, attention.id]),
     task('UH Matematika Wajib — permutasi & kombinasi', 15, [HARD.id, logika.id, attention.id]),
     task('UH Reading', 16, [EASY.id, belajarH1.id, logika.id]),
-    task('Quiz Kimia', 8, [MEDIUM.id, belajarH1.id, logika.id, mingguIni.id]),
-    task('UH Agama', 11, [EASY.id, hafalan.id, logika.id, belajarH1.id, mingguIni.id]),
+    task('Quiz Kimia', 8, [MEDIUM.id, belajarH1.id, logika.id]),
+    task('UH Agama', 11, [EASY.id, hafalan.id, logika.id, belajarH1.id]),
     task('Native Writing test', 18, [EASY.id, logika.id, belajarH1.id]),
     task('UH Informatika — CSS', 16, [MEDIUM.id, hafalan.id]),
-    task('UH Sejarah — kolonialisme dan imperialisme', 11, [MEDIUM.id, hafalan.id, mingguIni.id]),
+    task('UH Sejarah — kolonialisme dan imperialisme', 11, [MEDIUM.id, hafalan.id]),
   ]
 
   return {
@@ -110,6 +110,9 @@ export function seedData(): AppData {
       defaultGroupBy: 'date',
       importantOptionIds: [HARD.id, attention.id],
       activeBoardId: ulangan.id,
+      // maintained by the app: on for anything due Monday–Friday of this week
+      autoWeekOptionId: mingguIni.id,
+      autoWeekBoardIds: [ulangan.id],
     },
   }
 }

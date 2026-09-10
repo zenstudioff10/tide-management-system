@@ -189,6 +189,14 @@
   width: 130px;
 }
 
+/* a label the app maintains: shown, never offered as a control */
+.chip-auto {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--s-2);
+  opacity: 0.75;
+}
+
 .chip-row {
   display: flex;
   flex-wrap: wrap;

@@ -4,7 +4,7 @@ import { id } from '../lib/id'
 import { between } from '../lib/order'
 import { loadData, saveData, saveNow } from '../lib/persist'
 import { seedData } from '../lib/seed'
-import { nextOccurrence } from '../lib/time'
+import { nextOccurrence, thisWeekMonFri } from '../lib/time'
 
 interface AppStore extends AppData {
   ready: boolean
@@ -40,6 +40,9 @@ interface AppStore extends AppData {
   snooze: (reminderId: string, minutes: number) => void
 
   setSettings: (patch: Partial<Settings>) => void
+  /** puts the automatic week label where it belongs and takes it off where it
+   *  does not; safe to call as often as you like */
+  syncAutoWeek: () => void
 }
 
 const snapshot = (s: AppStore): AppData => ({
@@ -73,7 +76,21 @@ export const useApp = create<AppStore>((set, get) => ({
     const loaded = await loadData()
     const data = loaded ?? seedData()
 
-    // a file written before lists existed: everything in it was an exam
+      // a file written before the week label was automatic
+    if (!data.settings.autoWeekOptionId) {
+      const weekly = data.options.find((o) => /minggu ini/i.test(o.name))
+      if (weekly) {
+        data.settings = {
+          ...data.settings,
+          autoWeekOptionId: weekly.id,
+          autoWeekBoardIds: (data.boards ?? [])
+            .filter((b) => !/tugas/i.test(b.name))
+            .map((b) => b.id),
+        }
+      }
+    }
+
+  // a file written before lists existed: everything in it was an exam
     if (!data.boards || !data.boards.length) {
       const ulangan: Board = { id: id(), name: 'Ulangan', order: 0, groupBy: 'date' }
       const tugas: Board = { id: id(), name: 'Tugas', order: 1, groupBy: 'date' }
@@ -108,11 +125,13 @@ export const useApp = create<AppStore>((set, get) => ({
     }
 
     set({ ...data, ready: true })
+    get().syncAutoWeek()
     saveData(data)
   },
 
   replaceAll: (data) => {
     set({ ...data, ready: true })
+    get().syncAutoWeek()
     saveData(data)
   },
 
@@ -331,9 +350,53 @@ export const useApp = create<AppStore>((set, get) => ({
 
   // ── settings ─────────────────────────────────────────────────────────
   setSettings: (patch) => set((s) => ({ settings: { ...s.settings, ...patch } })),
+
+  syncAutoWeek: () => {
+    const s = get()
+    const optionId = s.settings.autoWeekOptionId
+    if (!optionId) return
+
+    const boards = new Set(s.settings.autoWeekBoardIds ?? [])
+    const { from, to } = thisWeekMonFri()
+
+    let changed = false
+    const tasks = s.tasks.map((t) => {
+      const applies = t.boardId ? boards.has(t.boardId) : false
+      const due = t.dueAt !== undefined && t.dueAt >= from && t.dueAt <= to
+      const should = applies && due
+      const has = t.optionIds.includes(optionId)
+      if (should === has) return t
+      changed = true
+      return {
+        ...t,
+        optionIds: should
+          ? [...t.optionIds, optionId]
+          : t.optionIds.filter((x) => x !== optionId),
+      }
+    })
+
+    if (changed) set({ tasks })
+  },
 }))
 
 /** Writes trail the state by 1.5s, coalesced, atomic on the Rust side. */
+/** Re-runs the automatic week label after anything that could change it.
+ *  A second pass finds nothing to do, so this cannot loop. */
+let syncing = false
+useApp.subscribe((state, prev) => {
+  if (!state.ready || syncing) return
+  if (
+    state.tasks === prev.tasks &&
+    state.settings === prev.settings &&
+    state.boards === prev.boards
+  ) {
+    return
+  }
+  syncing = true
+  state.syncAutoWeek()
+  syncing = false
+})
+
 let lastSnapshot: AppData | null = null
 useApp.subscribe((state) => {
   if (!state.ready) return

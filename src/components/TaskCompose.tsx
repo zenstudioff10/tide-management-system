@@ -23,6 +23,7 @@ export function TaskCompose() {
   const options = useApp((s) => s.options)
   const boards = useApp((s) => s.boards)
   const activeBoardId = useApp((s) => s.settings.activeBoardId)
+  const autoWeekOptionId = useApp((s) => s.settings.autoWeekOptionId)
 
   const [title, setTitle] = useState('')
   const [date, setDate] = useState('')
@@ -198,14 +199,21 @@ export function TaskCompose() {
                 {dimension.kind === 'multi' ? ' · boleh banyak' : ''}
               </span>
               <div className="chip-row">
-                {own.map((o) => (
-                  <Chip
-                    key={o.id}
-                    option={o}
-                    active={chosen.includes(o.id)}
-                    onClick={() => toggle(o.id)}
-                  />
-                ))}
+                {own.map((o) =>
+                  o.id === autoWeekOptionId ? (
+                    <span key={o.id} className="chip-auto">
+                      <Chip option={o} dim />
+                      <span className="gauge-label">otomatis</span>
+                    </span>
+                  ) : (
+                    <Chip
+                      key={o.id}
+                      option={o}
+                      active={chosen.includes(o.id)}
+                      onClick={() => toggle(o.id)}
+                    />
+                  ),
+                )}
                 {newOptionIn === dimension.id ? (
                   <input
                     className="field option-inline"

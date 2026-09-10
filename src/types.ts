@@ -102,6 +102,10 @@ export interface Settings {
   importantOptionIds?: Id[]
   /** the list in view; 'all' shows every list at once */
   activeBoardId?: Id | 'all'
+  /** the label the app maintains itself: on when the due date is this week */
+  autoWeekOptionId?: Id
+  /** the lists that rule applies to; the others are left alone */
+  autoWeekBoardIds?: Id[]
 }
 
 /** everything that lives in tide.json */

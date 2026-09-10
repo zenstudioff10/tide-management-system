@@ -26,6 +26,7 @@ export function TaskDrawer() {
   const [newOptionIn, setNewOptionIn] = useState<string | null>(null)
   const [newOptionName, setNewOptionName] = useState('')
   const boards = useApp((s) => s.boards)
+  const autoWeekOptionId = useApp((s) => s.settings.autoWeekOptionId)
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -82,14 +83,21 @@ export function TaskDrawer() {
                 {dimension.kind === 'multi' ? ' · any' : ''}
               </span>
               <div className="chip-row">
-                {own.map((o) => (
-                  <Chip
-                    key={o.id}
-                    option={o}
-                    active={task.optionIds.includes(o.id)}
-                    onClick={() => toggleOption(task.id, o.id)}
-                  />
-                ))}
+                {own.map((o) =>
+                  o.id === autoWeekOptionId ? (
+                    <span key={o.id} className="chip-auto">
+                      <Chip option={o} dim={!task.optionIds.includes(o.id)} />
+                      <span className="gauge-label">otomatis</span>
+                    </span>
+                  ) : (
+                    <Chip
+                      key={o.id}
+                      option={o}
+                      active={task.optionIds.includes(o.id)}
+                      onClick={() => toggleOption(task.id, o.id)}
+                    />
+                  ),
+                )}
                 {newOptionIn === dimension.id ? (
                   <input
                     className="field option-inline"
