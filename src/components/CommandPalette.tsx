@@ -37,9 +37,28 @@ export function CommandPalette() {
 
   useEffect(() => {
     if (!open) return
+    const seed = useUi.getState().chatSeed
     setQuery('')
-    setTurns([])
     setMemory({})
+    // a question typed on the homescreen is answered as the chat appears
+    if (seed?.trim()) {
+      const reply = respond(
+        seed,
+        {
+          tasks: useApp.getState().tasks,
+          boards: useApp.getState().boards,
+          options: useApp.getState().options,
+          dimensions: useApp.getState().dimensions,
+          settings: useApp.getState().settings,
+        },
+        Date.now(),
+      )
+      setTurns([{ id: Date.now(), question: seed, reply }])
+      setMemory(reply.memory)
+      useUi.getState().clearChatSeed()
+    } else {
+      setTurns([])
+    }
     window.setTimeout(() => inputRef.current?.focus(), 10)
   }, [open])
 

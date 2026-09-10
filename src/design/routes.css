@@ -6,9 +6,10 @@
   height: 100%;
   display: grid;
   grid-template-columns: minmax(0, 0.92fr) minmax(430px, 1.08fr);
-  grid-template-rows: auto minmax(0, 1fr) auto auto auto;
+  grid-template-rows: auto auto minmax(0, 1fr) auto auto auto;
   grid-template-areas:
     'head head'
+    'ask ask'
     'clock next'
     'tide tide'
     'foot foot'
@@ -39,6 +40,48 @@
   font-size: var(--step-2);
   letter-spacing: 0.02em;
   color: var(--ink-2);
+}
+
+/* the way into the assistant, at the top where you look first */
+.surface-ask {
+  grid-area: ask;
+  padding-left: 62px;
+}
+.ask-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: var(--s-2) 0;
+  border-bottom: 1px solid var(--hairline);
+  transition: border-color var(--t-touch) var(--ease-touch);
+}
+.ask-bar:hover,
+.ask-bar:focus-within {
+  border-color: color-mix(in oklab, var(--tod-light) 45%, transparent);
+}
+.ask-mark {
+  width: 5px;
+  height: 5px;
+  border-radius: var(--r-round);
+  background: var(--tod-light);
+  opacity: 0.55;
+  flex: none;
+  transition: opacity var(--t-touch) var(--ease-touch);
+}
+.ask-bar:focus-within .ask-mark {
+  opacity: 1;
+}
+.ask-bar input {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--step-1);
+  color: var(--ink-1);
+}
+.ask-bar input::placeholder {
+  color: var(--ink-4);
+}
+.ask-hint {
+  opacity: 0.5;
 }
 
 .surface-clock {
@@ -1110,6 +1153,7 @@
     grid-template-columns: minmax(0, 1fr);
     grid-template-areas:
       'head'
+      'ask'
       'clock'
       'next'
       'tide'

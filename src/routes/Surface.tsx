@@ -7,6 +7,7 @@ import { WeekLoad } from '../components/WeekLoad'
 import { boardTasks } from '../store/selectors'
 import { TideLine } from '../components/TideLine'
 import { QuickAdd } from '../components/QuickAdd'
+import { AskBar } from '../components/AskBar'
 import { IconBuoy, IconDepths, IconFocus, IconSettings, IconTimer } from '../design/icons'
 import { Chip } from '../components/Chip'
 import { useIntro } from '../intro/useIntro'
@@ -102,6 +103,10 @@ export function Surface() {
           </button>
         </div>
       </header>
+
+      <div className="surface-ask">
+        <AskBar />
+      </div>
 
       <div className="surface-clock">
         <h1 className="clock display">

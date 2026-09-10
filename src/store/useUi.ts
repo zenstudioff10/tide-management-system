@@ -29,6 +29,8 @@ interface UiStore {
   burst: { x: number; y: number; key: number } | null
   /** null = closed; a string = the composer is open, seeded with that text */
   composing: string | null
+  /** a question typed outside the chat, to be answered as it opens */
+  chatSeed: string | null
 
   go: (route: Route) => void
   setGroupBy: (dimensionId: string | null) => void
@@ -38,6 +40,8 @@ interface UiStore {
   setQuery: (q: string) => void
   openTask: (taskId: string | null) => void
   setPalette: (open: boolean) => void
+  askChat: (question: string) => void
+  clearChatSeed: () => void
   toggleShowDone: () => void
   startCompose: (text?: string) => void
   endCompose: () => void
@@ -68,6 +72,7 @@ export const useUi = create<UiStore>((set) => ({
   paletteOpen: false,
   showDone: false,
   composing: null,
+  chatSeed: null,
   confirm: null,
   clearing: [],
   toast: null,
@@ -93,6 +98,8 @@ export const useUi = create<UiStore>((set) => ({
   setQuery: (query) => set({ query }),
   openTask: (openTaskId) => set({ openTaskId }),
   setPalette: (paletteOpen) => set({ paletteOpen }),
+  askChat: (question) => set({ paletteOpen: true, chatSeed: question }),
+  clearChatSeed: () => set({ chatSeed: null }),
   toggleShowDone: () => set((s) => ({ showDone: !s.showDone })),
   startCompose: (text = '') => set({ composing: text, paletteOpen: false }),
   endCompose: () => set({ composing: null }),
