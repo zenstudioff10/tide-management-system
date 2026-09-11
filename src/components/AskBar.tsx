@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useUi } from '../store/useUi'
 import { IconAsk } from '../design/icons'
+import { MicButton } from './MicButton'
 
 /** The way in. Type a question here and the chat opens already answering it —
  *  the same local assistant ⌘K reaches, just no longer hidden behind it. */
@@ -29,6 +30,13 @@ export function AskBar() {
         }}
       />
       <span className="gauge-label ask-hint">⌘K</span>
+      <MicButton
+        onPartial={setValue}
+        onHeard={(text) => {
+          setValue('')
+          useUi.getState().askChat(text)
+        }}
+      />
       <button
         className="icon-button ask-open"
         title="Buka chat"

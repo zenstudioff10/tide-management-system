@@ -6,6 +6,7 @@ import { Chip } from './Chip'
 import { fmtCountdown, fmtDayCell } from '../lib/time'
 import type { Route } from '../types'
 import { useExit } from '../lib/useExit'
+import { MicButton } from './MicButton'
 
 interface Command {
   id: string
@@ -103,8 +104,8 @@ export function CommandPalette() {
   const { render, leaving } = useExit(open, 200)
   if (!render) return null
 
-  const send = () => {
-    const question = query.trim()
+  const send = (spoken?: string) => {
+    const question = (spoken ?? query).trim()
     if (!question) return
     const reply = respond(
       question,
@@ -190,6 +191,7 @@ export function CommandPalette() {
               e.stopPropagation()
             }}
           />
+          <MicButton onPartial={setQuery} onHeard={(text) => send(text)} />
         </div>
 
         {matches.length > 0 && (

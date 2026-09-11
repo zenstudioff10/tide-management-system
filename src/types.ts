@@ -92,6 +92,8 @@ export interface Settings {
   chimeVolume: number
   /** the presses, hovers and completions. Absent means on. */
   uiSounds?: boolean
+  /** the microphone on the ask bar and in the chat. Absent means on. */
+  voice?: boolean
   ambient: 'shader' | 'still'
   clock24h: boolean
   showSeconds: boolean

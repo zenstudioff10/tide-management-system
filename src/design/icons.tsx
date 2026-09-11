@@ -116,6 +116,15 @@ export const IconAsk = ({ size = 20, className }: Props) =>
     </>
   ))
 
+export const IconMic = ({ size = 20, className }: Props) =>
+  svg(size, className, (
+    <>
+      <rect x={7.6} y={2.6} width={4.8} height={9} rx={2.4} />
+      <path d="M4.8 9.6a5.2 5.2 0 0 0 10.4 0" />
+      <path d="M10 14.8v2.6" />
+    </>
+  ))
+
 export const IconSearch = ({ size = 20, className }: Props) =>
   svg(size, className, (
     <>

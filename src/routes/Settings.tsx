@@ -497,6 +497,11 @@ export function Settings() {
               label={settings.uiSounds !== false ? 'suara antarmuka' : 'antarmuka sunyi'}
               onClick={() => setSettings({ uiSounds: settings.uiSounds === false })}
             />
+            <Toggle
+              on={settings.voice !== false}
+              label={settings.voice !== false ? 'mikrofon' : 'mikrofon mati'}
+              onClick={() => setSettings({ voice: settings.voice === false })}
+            />
             <label className="number-field slider-field">
               <span className="gauge-label">chime</span>
               <input

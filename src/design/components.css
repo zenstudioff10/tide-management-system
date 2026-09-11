@@ -1281,6 +1281,52 @@ button:active:not(:disabled),
 
 /* ── touch devices ──────────────────────────────────────────────────── */
 /* no hover, no shortcut bar, and fingers are wider than a cursor */
+/* ── the microphone ─────────────────────────────────────────────────── */
+/* Idle it is another quiet mark in the row. Listening, a ring breathes around
+   it at the pace of the boot line, so you can see it is still hearing you. */
+
+.mic-button {
+  position: relative;
+  flex: none;
+}
+.mic-ring {
+  position: absolute;
+  inset: -0.125rem;
+  border-radius: var(--r-round);
+  border: 1px solid transparent;
+  pointer-events: none;
+  transition: border-color var(--t-out) var(--ease-tide);
+}
+.mic-button[data-state='listening'] {
+  color: var(--tod-light);
+}
+.mic-button[data-state='listening'] .mic-ring {
+  border-color: color-mix(in oklab, var(--tod-light) 55%, transparent);
+  animation: mic-breathe 1.8s ease-in-out infinite;
+}
+.mic-button[data-state='denied'] {
+  color: var(--coral);
+}
+
+@keyframes mic-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.45;
+  }
+  50% {
+    transform: scale(1.14);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mic-button[data-state='listening'] .mic-ring {
+    animation: none;
+    opacity: 1;
+  }
+}
+
 @media (hover: none) {
   /* anything that waited for a hover is simply there */
   .subtask-remove,
