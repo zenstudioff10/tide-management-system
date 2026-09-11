@@ -1227,9 +1227,10 @@
     /* the slack belongs to the band's row, and the band sits at the bottom of
        it, so the empty water opens up between the clock and the list */
     grid-template-rows: auto auto auto minmax(0, 1fr) auto auto auto;
-    /* tighter between rows than the side-by-side layout: at this scale the
-       gaps alone were taking a hundred pixels the band needed */
-    gap: var(--s-3) var(--s-6);
+    gap: var(--s-4) var(--s-6);
+    /* the width is the whole point of this arrangement: the band uses it, and
+       a 1600px slab centred on a screen this size is what stranded it before */
+    max-width: none;
   }
 
   .surface-next {
@@ -1239,14 +1240,14 @@
     max-height: 100%;
     /* the bleed matches the padding, so the rows line up with the wordmark */
     margin: 0 calc(var(--s-5) * -1);
-    padding: var(--s-2) var(--s-5);
+    padding: var(--s-4) var(--s-5);
     /* lit top to bottom rather than across: there is no right-hand column for
        a 100deg gradient to favour any more */
     background: linear-gradient(
       180deg,
-      color-mix(in oklab, var(--veil) 44%, transparent),
-      color-mix(in oklab, var(--veil) 76%, transparent) 38%,
-      color-mix(in oklab, var(--veil) 66%, transparent)
+      color-mix(in oklab, var(--veil) 58%, transparent),
+      color-mix(in oklab, var(--veil) 86%, transparent) 38%,
+      color-mix(in oklab, var(--veil) 76%, transparent)
     );
   }
 
@@ -1254,7 +1255,7 @@
   .agenda {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: var(--s-1) var(--s-6);
+    gap: var(--s-2) var(--s-6);
     align-content: start;
     padding-bottom: 0;
     /* it is a band, not a viewport into a longer list: it takes the height its
@@ -1267,17 +1268,10 @@
     mask-image: none;
   }
 
-  /* Two rows of three. Nine would need a third row, and a third row only fits
-     if the clock drops below the size it already has in a window — a worse
-     trade than showing the six nearest with "semua" one click away. */
-  .agenda li:nth-child(n + 7) {
-    display: none;
-  }
-
   /* the row keeps its stacked shape: in three columns the title needs the
      whole width, and chips under it cost less height than a truncated title
      costs in legibility */
   .agenda-row {
-    gap: 0.125rem var(--s-3);
+    gap: 0.1875rem var(--s-3);
   }
 }

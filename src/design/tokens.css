@@ -2,14 +2,9 @@
    Fixed palette below; the --tod-* variables are rewritten at runtime by
    useTimeOfDay() so the interface and the water always agree on the hour. */
 
-/* The interface was drawn in a window 1344px wide. 1.19vw is 16 / 1344, so at
-   that width the root is exactly 16px and nothing below it changes by a pixel;
-   past it every rem in the app grows with the display, which is what makes a
-   full screen the same layout rather than a small one stranded in the middle. */
-:root {
-  font-size: clamp(16px, 1.19vw, 36px);
-}
-
+/* No fluid root. Everything below is in rem so the scale is written once, but
+   the root stays the browser's 16px at every width: a full screen gets the
+   layout rearranged, not the type enlarged. 0.25rem is 4px here and everywhere. */
 :root {
   /* --- water, deepest to lightest --- */
   --abyss: #05090e;
@@ -90,10 +85,10 @@
   --t-slow: 900ms;
   --breath: 6s;
 
-  /* The interface stops spreading here; the ocean behind it never does.
-     In rem, so it grows with the scale instead of leaving a fixed 1600px slab
-     marooned in the middle of a large display. */
-  --page-max: 84rem;
+  /* the interface stops spreading here; the ocean behind it never does.
+     Lifted entirely in the fullscreen band layout, where the width is the
+     point. */
+  --page-max: 100rem;
 
   --z-water: 0;
   --z-content: 10;
