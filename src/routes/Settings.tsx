@@ -47,6 +47,11 @@ function Boards() {
             <span className="gauge-label">
               {tasks.filter((t) => t.boardId === board.id).length} isi
             </span>
+            <Toggle
+              on={board.tracksProgress === true}
+              label="lacak progres"
+              onClick={() => app.updateBoard(board.id, { tracksProgress: !board.tracksProgress })}
+            />
             <button
               className="quiet-button danger"
               disabled={boards.length < 2}

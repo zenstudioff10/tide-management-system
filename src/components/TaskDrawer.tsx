@@ -30,6 +30,7 @@ export function TaskDrawer() {
   const [newOptionIn, setNewOptionIn] = useState<string | null>(null)
   const [newOptionName, setNewOptionName] = useState('')
   const boards = useApp((s) => s.boards)
+  const tracksProgress = boards.find((b) => b.id === task?.boardId)?.tracksProgress
   const autoWeekOptionId = useApp((s) => s.settings.autoWeekOptionId)
 
   useEffect(() => {
@@ -75,6 +76,25 @@ export function TaskDrawer() {
           placeholder="notes"
           onChange={(e) => updateTask(task.id, { notes: e.target.value })}
         />
+
+        {tracksProgress && (
+          <section className="drawer-block progress-block">
+            <span className="gauge-label">
+              progres
+              <span className="progress-readout mono">{task.progress ?? 0}%</span>
+            </span>
+            <input
+              className="progress-slider"
+              type="range"
+              min={0}
+              max={100}
+              step={5}
+              value={task.progress ?? 0}
+              aria-label="Progres"
+              onChange={(e) => updateTask(task.id, { progress: Number(e.target.value) })}
+            />
+          </section>
+        )}
 
         {dimensions.map((dimension) => {
           const own = options

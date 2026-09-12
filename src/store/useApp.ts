@@ -114,6 +114,17 @@ export const useApp = create<AppStore>((set, get) => ({
       }
     }
 
+    // a file written before a list could track progress. /tugas/i is the same
+    // test the auto-week rule above uses to tell homework from exams, so the
+    // two agree about what a homework list is.
+    if (data.boards?.some((b) => b.tracksProgress === undefined)) {
+      data.boards = data.boards.map((b) =>
+        b.tracksProgress === undefined
+          ? { ...b, tracksProgress: /tugas/i.test(b.name) }
+          : b,
+      )
+    }
+
     // a file written before "label penting" existed: choose the obvious ones
     if (!data.settings.importantOptionIds) {
       data.settings = {

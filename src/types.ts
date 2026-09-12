@@ -32,6 +32,8 @@ export interface Board {
   groupBy?: string | null
   /** dimensionId → chosen optionIds */
   filters?: Record<string, string[]>
+  /** homework is a fraction; an exam is one or the other */
+  tracksProgress?: boolean
 }
 
 export interface Subtask {
@@ -61,6 +63,8 @@ export interface Task {
   repeat?: Repeat
   /** fractional index — reordering inserts at the midpoint of its neighbours */
   order: number
+  /** 0-100, on the lists that track it. Absent means never set. */
+  progress?: number
   subtasks: Subtask[]
   createdAt: number
   completedAt?: number

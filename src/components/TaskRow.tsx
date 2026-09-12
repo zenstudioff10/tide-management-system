@@ -4,6 +4,7 @@ import { Chip } from './Chip'
 import { IconCheck } from '../design/icons'
 import { fmtDayCell, fmtDayLong, sameDay, startOfDay } from '../lib/time'
 import { useUi } from '../store/useUi'
+import { useApp } from '../store/useApp'
 import { completeTask } from './ConfirmHold'
 
 interface Props {
@@ -31,6 +32,13 @@ export function TaskRow({
   onDragStart,
   onDragEnd,
 }: Props) {
+  // the row asks its own list, because the "semua" tab puts rows from several
+  // lists in one column and a prop from the route could not tell them apart
+  const tracksProgress = useApp(
+    (s) => s.boards.find((b) => b.id === task.boardId)?.tracksProgress,
+  )
+  const progress = task.progress ?? 0
+
   const chips = useMemo(() => {
     const shown = new Map(
       dimensions.filter((d) => d.showOnCard).map((d) => [d.id, d.order]),
@@ -115,6 +123,15 @@ export function TaskRow({
               <span key={i} className="foam-speck" style={{ ['--i' as string]: i }} />
             ))}
           </span>
+        )}
+
+        {tracksProgress && progress > 0 && (
+          <div className="task-progress" data-dim={done ? '' : undefined}>
+            <span className="task-progress-track">
+              <span className="task-progress-fill" style={{ width: `${progress}%` }} />
+            </span>
+            <span className="task-progress-value mono">{progress}%</span>
+          </div>
         )}
 
         {chips.length > 0 && (
