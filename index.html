@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Tide</title>
+    <style>
+      /* Painted by the parser, before a line of application code runs: the
+         bundle, the fonts, the data file and the first WebGL frame all happen
+         behind this. Hard-coded values — the token sheet has not loaded yet. */
+      html,
+      body {
+        margin: 0;
+        background: #05090e;
+      }
+      #boot {
+        position: fixed;
+        inset: 0;
+        z-index: 999;
+        display: grid;
+        place-content: center;
+        justify-items: center;
+        gap: 18px;
+        background: #05090e;
+        transition: opacity 400ms cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      #boot.gone {
+        opacity: 0;
+        pointer-events: none;
+      }
+      .boot-mark {
+        /* the fallback stack --font-display already names, so nothing reflows
+           when Instrument Serif finally arrives */
+        font-family: 'Iowan Old Style', Georgia, serif;
+        font-size: 30px;
+        letter-spacing: 0.02em;
+        color: rgba(191, 220, 216, 0.72);
+      }
+      .boot-line {
+        width: 120px;
+        height: 1px;
+        background: rgba(191, 220, 216, 0.5);
+        animation: boot-breathe 2s ease-in-out infinite;
+      }
+      @keyframes boot-breathe {
+        0%,
+        100% {
+          opacity: 0.15;
+          transform: scaleX(0.7);
+        }
+        50% {
+          opacity: 0.7;
+          transform: scaleX(1);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .boot-line {
+          animation: none;
+          opacity: 0.4;
+        }
+      }
+    </style>
+    <script type="module" crossorigin src="./assets/main-Cgg9jSYU.js"></script>
+    <link rel="modulepreload" crossorigin href="./assets/window-C34i1Zyr.js">
+    <link rel="stylesheet" crossorigin href="./assets/window-WCn5mMFh.css">
+  </head>
+  <body>
+    <div id="boot">
+      <span class="boot-mark">tide</span>
+      <span class="boot-line"></span>
+    </div>
+    <div id="root"></div>
+  </body>
+</html>
