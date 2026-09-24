@@ -132,3 +132,42 @@ export const IconSearch = ({ size = 20, className }: Props) =>
       <path d="M12.6 12.6 16 16" />
     </>
   ))
+
+/* ── the notes toolbar ── */
+
+export const IconHighlight = ({ size = 20, className }: Props) =>
+  svg(size, className, (
+    <>
+      <path d="M12.2 3.8 16.2 7.8 9.4 14.6H5.4v-4Z" />
+      <path d="M3.5 17h9" opacity={0.55} />
+    </>
+  ))
+
+export const IconListBullet = ({ size = 20, className }: Props) =>
+  svg(size, className, (
+    <>
+      <circle cx="4.5" cy="5.5" r="0.9" fill="currentColor" stroke="none" />
+      <circle cx="4.5" cy="10" r="0.9" fill="currentColor" stroke="none" />
+      <circle cx="4.5" cy="14.5" r="0.9" fill="currentColor" stroke="none" />
+      <path d="M8 5.5h8.5M8 10h8.5M8 14.5h8.5" />
+    </>
+  ))
+
+export const IconListNumber = ({ size = 20, className }: Props) =>
+  svg(size, className, (
+    <>
+      <path d="M3.6 4.6 4.8 4v3.2" />
+      <path d="M3.6 11.4c.2-.7 2-.9 2 .1 0 .7-2 1.5-2 2.3h2" />
+      <path d="M8 5.5h8.5M8 12.5h8.5" />
+    </>
+  ))
+
+export const IconListCheck = ({ size = 20, className }: Props) =>
+  svg(size, className, (
+    <>
+      <circle cx="4.5" cy="6" r="1.8" />
+      <path d="M3.7 6 4.3 6.6 5.4 5.4" />
+      <circle cx="4.5" cy="14" r="1.8" />
+      <path d="M8.5 6h8M8.5 14h8" />
+    </>
+  ))

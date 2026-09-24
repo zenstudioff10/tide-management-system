@@ -70,7 +70,7 @@ export function Depths() {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement
-      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') return
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) return
       const app = useApp.getState()
       const index = cursor ? flat.indexOf(cursor) : -1
 

@@ -1,5 +1,6 @@
 import type { AppData, DimOption, Task } from '../types'
 import { addDays, daysUntil, startOfDay } from '../lib/time'
+import { notesText } from '../lib/notes'
 
 /** The tasks in the active list — or all of them when "semua" is chosen. */
 export function boardTasks(data: Pick<AppData, 'tasks' | 'settings'>): Task[] {
@@ -36,7 +37,7 @@ const matches = (task: Task, filters: Record<string, string[]>, query: string, s
   }
   if (query.trim()) {
     const q = query.trim().toLowerCase()
-    if (!task.title.toLowerCase().includes(q) && !task.notes.toLowerCase().includes(q)) return false
+    if (!task.title.toLowerCase().includes(q) && !notesText(task.notes).toLowerCase().includes(q)) return false
   }
   return true
 }

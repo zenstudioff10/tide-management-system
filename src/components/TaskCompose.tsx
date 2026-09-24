@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useApp } from '../store/useApp'
 import { useUi } from '../store/useUi'
 import { Chip } from './Chip'
+import { NotesEditor } from './NotesEditor'
 import { IconClose, IconPlus } from '../design/icons'
 import { quickParse } from '../lib/quickparse'
 import { addDays, fmtDayLong, startOfDay } from '../lib/time'
@@ -97,7 +98,7 @@ export function TaskCompose() {
     if (!name) return
     useApp.getState().addTask({
       title: name,
-      notes: notes.trim(),
+      notes,
       optionIds: chosen,
       dueAt,
       boardId,
@@ -263,13 +264,7 @@ export function TaskCompose() {
 
         <section className="drawer-block">
           <span className="gauge-label">catatan</span>
-          <textarea
-            className="drawer-notes"
-            rows={2}
-            value={notes}
-            placeholder="opsional"
-            onChange={(e) => setNotes(e.target.value)}
-          />
+          <NotesEditor docKey={String(seed)} value={notes} placeholder="opsional" onChange={setNotes} />
         </section>
 
         <div className="drawer-foot">

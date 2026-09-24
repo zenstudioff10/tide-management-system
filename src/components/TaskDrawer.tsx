@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useApp } from '../store/useApp'
 import { useUi } from '../store/useUi'
 import { Chip } from './Chip'
+import { NotesEditor } from './NotesEditor'
 import { IconClose, IconPlus } from '../design/icons'
 import { id } from '../lib/id'
 import { OPTION_COLORS } from '../ocean/palette'
@@ -69,12 +70,11 @@ export function TaskDrawer() {
           onChange={(e) => updateTask(task.id, { title: e.target.value })}
         />
 
-        <textarea
-          className="drawer-notes"
+        <NotesEditor
+          docKey={task.id}
           value={task.notes}
-          rows={3}
           placeholder="notes"
-          onChange={(e) => updateTask(task.id, { notes: e.target.value })}
+          onChange={(notes) => updateTask(task.id, { notes })}
         />
 
         {tracksProgress && (
